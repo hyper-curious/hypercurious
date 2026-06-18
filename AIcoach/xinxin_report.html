@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>欣欣 · AI私教服务交付报告</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #d5d0c8;
+    font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+    min-height: 100vh;
+    color: #1a1a1a;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Lock Screen ── */
+  .lock-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    transition: opacity 0.4s ease;
+  }
+  .lock-screen.fading { opacity: 0; }
+  .lock-card {
+    background: #f0ede6;
+    padding: 48px 36px;
+    max-width: 340px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.12);
+  }
+  .lock-brand {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: #999;
+    margin-bottom: 24px;
+  }
+  .lock-title {
+    font-family: 'Noto Serif SC', serif;
+    font-weight: 900;
+    font-size: 20px;
+    margin-bottom: 8px;
+  }
+  .lock-sub {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 28px;
+  }
+  .lock-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #1a1a1a;
+    background: transparent;
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 14px;
+    text-align: center;
+    letter-spacing: 4px;
+    outline: none;
+    margin-bottom: 12px;
+    transition: border-color 0.2s;
+  }
+  .lock-input:focus { border-color: #1B6B5A; }
+  .lock-input::placeholder { letter-spacing: 1px; color: #bbb; }
+  .lock-btn {
+    width: 100%;
+    padding: 12px;
+    background: #1a1a1a;
+    color: #fff;
+    border: none;
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 13px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .lock-btn:hover { background: #1B6B5A; }
+  .lock-error {
+    font-size: 11px;
+    color: #c44;
+    margin-top: 12px;
+    min-height: 16px;
+  }
+
+  /* ── Report ── */
+  .report-wrap {
+    display: none;
+    padding: 0 0 60px;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+  .report-wrap.visible { display: block; }
+  .report-wrap.shown { opacity: 1; }
+
+  .report {
+    max-width: 640px;
+    margin: 0 auto;
+    background: #f0ede6;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.12);
+  }
+  .report-inner { padding: 36px 28px; }
+
+  @media (max-width: 680px) {
+    .report { box-shadow: none; }
+    .report-inner { padding: 28px 20px; }
+    body { background: #f0ede6; }
+  }
+
+  /* Masthead */
+  .masthead {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding-bottom: 8px;
+    border-bottom: 3px double #1a1a1a;
+    margin-bottom: 28px;
+  }
+  .masthead span {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 8px;
+    letter-spacing: 2px;
+    color: #777;
+  }
+
+  /* Title */
+  .title-block { margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid #1a1a1a; }
+  .report-title {
+    font-family: 'Noto Serif SC', serif;
+    font-weight: 900;
+    font-size: 24px;
+    line-height: 1.25;
+    letter-spacing: -0.5px;
+    margin-bottom: 10px;
+  }
+  .accent { color: #1B6B5A; }
+  .report-meta {
+    font-size: 11px;
+    color: #888;
+    line-height: 1.8;
+  }
+
+  /* Sections */
+  .section { margin-bottom: 28px; }
+  .section-label {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 8px;
+    letter-spacing: 3px;
+    color: #999;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .section-title {
+    font-family: 'Noto Serif SC', serif;
+    font-weight: 900;
+    font-size: 17px;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(26,26,26,0.15);
+  }
+  .subsection-title {
+    font-family: 'Noto Serif SC', serif;
+    font-weight: 700;
+    font-size: 13px;
+    color: #1B6B5A;
+    margin-bottom: 12px;
+    letter-spacing: 0.5px;
+  }
+
+  /* Checklist */
+  .cg { margin-bottom: 14px; }
+  .cg-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 4px;
+  }
+  .ci {
+    font-size: 12px;
+    line-height: 1.7;
+    color: #444;
+    padding: 2px 0 2px 18px;
+    position: relative;
+  }
+  .ci::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: #1B6B5A;
+    font-weight: 700;
+    font-size: 11px;
+  }
+
+  /* Insights */
+  .insight { margin-bottom: 20px; }
+  .insight-s {
+    font-family: 'Noto Serif SC', serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: #1a1a1a;
+    line-height: 1.5;
+    margin-bottom: 6px;
+  }
+  .insight-b {
+    font-size: 12.5px;
+    line-height: 1.8;
+    color: #444;
+    margin-bottom: 8px;
+  }
+  .insight-a {
+    font-size: 12.5px;
+    line-height: 1.75;
+    color: #1B6B5A;
+    font-weight: 500;
+    padding-left: 12px;
+    border-left: 2px solid #1B6B5A;
+  }
+
+  /* Timeline */
+  .tl { margin-bottom: 22px; padding-left: 24px; position: relative; }
+  .tl::before {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #1a1a1a;
+  }
+  .tl::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 6px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #1B6B5A;
+  }
+  .tl.muted::before { background: #ccc; }
+  .tl.muted::after { background: #ccc; }
+  .tl-label {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: #1B6B5A;
+    font-weight: 700;
+    margin-bottom: 3px;
+  }
+  .tl-title {
+    font-family: 'Noto Serif SC', serif;
+    font-weight: 700;
+    font-size: 14px;
+    margin-bottom: 5px;
+  }
+  .tl-body {
+    font-size: 12.5px;
+    line-height: 1.75;
+    color: #444;
+  }
+  .tl.muted .tl-label { color: #999; }
+
+  /* Tool cards */
+  .tool-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+  .tool-card { border: 1px solid rgba(26,26,26,0.15); padding: 14px; background: rgba(255,255,255,0.4); }
+  .tool-card-name { font-weight: 700; font-size: 13px; margin-bottom: 4px; }
+  .tool-card-desc { font-size: 12px; color: #666; line-height: 1.55; margin-bottom: 6px; }
+  .tool-card-how {
+    font-size: 11px; color: #999; line-height: 1.5;
+    padding-top: 6px; border-top: 1px dotted rgba(26,26,26,0.15);
+  }
+
+  .tools-note {
+    font-size: 12px;
+    line-height: 1.75;
+    color: #666;
+    margin-top: 12px;
+    padding: 12px;
+    background: rgba(27,107,90,0.06);
+    border-left: 2px solid #1B6B5A;
+  }
+
+  /* Next */
+  .next-item {
+    font-size: 12px;
+    line-height: 1.65;
+    color: #444;
+    padding: 6px 0;
+    border-bottom: 1px dotted rgba(26,26,26,0.15);
+  }
+  .next-item:last-child { border-bottom: none; }
+
+  /* Divider */
+  .div { border: none; border-top: 1px solid rgba(26,26,26,0.15); margin: 24px 0; }
+
+  /* Footer */
+  .footer {
+    margin-top: 32px;
+    padding-top: 14px;
+    border-top: 3px double #1a1a1a;
+    text-align: center;
+  }
+  .footer-text {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 12px;
+    color: #888;
+  }
+  .footer-sig {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 8px;
+    letter-spacing: 2px;
+    color: #999;
+    margin-top: 10px;
+  }
+
+  /* Mobile tweaks */
+  @media (max-width: 480px) {
+    .report-title { font-size: 22px; }
+    .report-meta { font-size: 13px; }
+    .section-title { font-size: 18px; }
+    .subsection-title { font-size: 15px; }
+    .insight-s { font-size: 16px; }
+    .insight-b { font-size: 15px; line-height: 1.85; }
+    .insight-a { font-size: 15px; line-height: 1.85; }
+    .cg-title { font-size: 14px; }
+    .ci { font-size: 14px; }
+    .tl-title { font-size: 16px; }
+    .tl-body { font-size: 15px; line-height: 1.85; }
+    .tools-note { font-size: 14px; }
+    .next-item { font-size: 14px; }
+    .footer-text { font-size: 14px; }
+    .tool-grid { grid-template-columns: 1fr; }
+    .tool-card-name { font-size: 15px; }
+    .tool-card-desc { font-size: 14px; }
+    .tool-card-how { font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Lock Screen -->
+<div class="lock-screen" id="lockScreen">
+  <div class="lock-card">
+    <div class="lock-brand">SHELL · AI私教</div>
+    <div class="lock-title">交付报告</div>
+    <div class="lock-sub">请输入密码查看</div>
+    <input class="lock-input" id="pwdInput" type="password" placeholder="密码" autofocus>
+    <button class="lock-btn" onclick="unlock()">查看报告</button>
+    <div class="lock-error" id="pwdError"></div>
+  </div>
+</div>
+
+<!-- Report -->
+<div class="report-wrap" id="reportWrap">
+<div class="report">
+<div class="report-inner">
+
+  <!-- Masthead -->
+  <div class="masthead">
+    <span>SHELL · AI私教</span>
+    <span>交付报告 · 2026.06.08</span>
+  </div>
+
+  <!-- Title -->
+  <div class="title-block">
+    <div class="report-title">欣欣 · <span class="accent">AI私教</span>服务交付</div>
+    <div class="report-meta">
+      日期：2026 年 6 月 8 日<br>
+      服务内容：诊断 + AI 环境搭建 + 场景梳理<br>
+      教练：Shell（贝林）
+    </div>
+  </div>
+
+  <!-- 01 交付清单 -->
+  <div class="section">
+    <div class="section-label">01</div>
+    <div class="section-title">交付清单</div>
+
+    <div class="cg">
+      <div class="cg-title">网络与访问</div>
+      <div class="ci">梯子安装配置（电脑 + 手机），可正常访问海外服务</div>
+      <div class="ci">海外 App Store 账号配置（用于下载海外应用）</div>
+    </div>
+    <div class="cg">
+      <div class="cg-title">AI 工具</div>
+      <div class="ci">Claude 账号注册 + 登录（电脑端 + 手机端，数据互通）</div>
+      <div class="ci">Gemini 安装</div>
+      <div class="ci">ChatGPT 安装</div>
+    </div>
+    <div class="cg">
+      <div class="cg-title">配套工具</div>
+      <div class="ci">飞书妙记录音功能确认（电脑端 + 手机端均可录音）</div>
+      <div class="ci">YouTube、Instagram 安装（内容参考与学习）</div>
+    </div>
+    <div class="cg">
+      <div class="cg-title">诊断</div>
+      <div class="ci">日常工作流梳理 + AI 场景全景图</div>
+      <div class="ci">初步行动计划</div>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <!-- 02 洞察 -->
+  <div class="section">
+    <div class="section-label">02</div>
+    <div class="section-title">关于你的洞察</div>
+
+    <div class="subsection-title">你的业务结构</div>
+
+    <div class="insight">
+      <div class="insight-s">你有两条线，各自独立，但共享一个底层能力。</div>
+      <div class="insight-b">教学是主业，茶室是副业。表面看是两件事，但你在茶室里用的核心能力——审美、选品、团队带教、大众点评运营——其实都是"把一个空间从零做到被认可"的操盘能力。这个能力不绑在茶室上，它可以迁移。</div>
+    </div>
+
+    <div class="insight">
+      <div class="insight-s">你的时间结构决定了 AI 对你的价值。</div>
+      <div class="insight-b">周六日满课、每天 6 小时教学，周中要管茶室运营，还想做文创和播客。你最稀缺的不是能力，是时间。AI 对你最大的价值就是在你已有的工作流里帮你省出时间——备课、整理、做账、出素材，每天省出 1-2 小时，积累起来就是另一条线的启动空间。</div>
+    </div>
+
+    <div class="subsection-title">我在现场看见的你</div>
+
+    <div class="insight">
+      <div class="insight-s">你什么都想做，但最需要的是先做完一件。</div>
+      <div class="insight-b">教学备课、茶室管理、文创 IP、播客、资料沉淀——你提了很多方向，每个都有道理。但方向越多，越不容易迈出第一步。你自己也说过，"买了东西不用，开了文档不看"。不是你不行，是同时启动太多件事会让每一件都停在起点。</div>
+      <div class="insight-a">先挑一件，跑通它，再加下一件。哪件先跑？哪件你每天都在做、痛感最强、AI 介入最容易见效——大概率是教学。</div>
+    </div>
+
+    <div class="insight">
+      <div class="insight-s">你说自己是"AI 小白"，但你不是。</div>
+      <div class="insight-b">你一直在用豆包和 DeepSeek，而且你会判断输出质量——你说豆包"不深刻""嬉皮笑脸"，这说明你有标准。你缺的不是学习能力，是有人在你的真实场景里带你跑通第一个完整流程。跑通一个，剩下的你自己会举一反三。</div>
+    </div>
+
+    <div class="insight">
+      <div class="insight-s">你很会提问。</div>
+      <div class="insight-b">聊天的时候你追问的方式很好——会质疑、会拿自己的经验对照、会问"那这个东西到底能做到什么程度"。这是用好 AI 最重要的能力。很多人只会接收答案，你会追问和验证——这让 AI 对你的产出质量会比对大多数人更高。</div>
+      <div class="insight-a">下次跟 Claude 聊的时候，试着像跟一个很懂行的朋友聊一样，把你的真实困惑和判断都说出来，不用整理成"问题"再发。越真实，它给你的东西越有用。</div>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <!-- 03 行动建议 -->
+  <div class="section">
+    <div class="section-label">03</div>
+    <div class="section-title">行动建议</div>
+
+    <div class="tl">
+      <div class="tl-label">本周</div>
+      <div class="tl-title">录课</div>
+      <div class="tl-body">打开飞书妙记，上课的时候点录音就行。不用想怎么用，先录。录完之后你就有了课堂逐字稿——这些素材是你最大的资产。后面可以让 Claude 帮你做课堂复盘、知识点提取、练习题生成、分层作业设计。先积累素材，用法慢慢来。</div>
+    </div>
+
+    <div class="tl">
+      <div class="tl-label">两周内</div>
+      <div class="tl-title">用 Claude 跑一个真实场景</div>
+      <div class="tl-body">拿一节你已经录好的课，把逐字稿发给 Claude，让它帮你整理这节课的知识点、生成配套练习题。你自己操作一遍，看看出来的东西够不够你用。这是你第一次在自己的真实工作里验证 AI 到底能帮到什么程度——跑完你就有自己的判断了。</div>
+    </div>
+
+    <div class="tl">
+      <div class="tl-label">一个月内</div>
+      <div class="tl-title">茶室管理工具迁移</div>
+      <div class="tl-body">把茶室的一个管理场景（会员记录或出入库）用飞书多维表格跑起来。之前给你看过模板，先从最小的开始，不用一次全搞。店员可以直接在手机上填，你实时看到。用着用着你就知道还想加什么了。</div>
+    </div>
+
+    <div class="tl muted">
+      <div class="tl-label">不急着做</div>
+      <div class="tl-title">文创 IP · 播客 · 知识体系搭建</div>
+      <div class="tl-body">这些方向都很好，你也有感觉和能力。但现在不是时候——等上面的事跑顺了，有了节奏，再加进来。你说过你买了很多东西不用、开了很多文档不看，最好的解法就是先做少一点、做完它。</div>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <!-- 04 工具箱 -->
+  <div class="section">
+    <div class="section-label">04</div>
+    <div class="section-title">你的工具箱</div>
+
+    <div class="tool-grid">
+      <div class="tool-card">
+        <div class="tool-card-name">Claude</div>
+        <div class="tool-card-desc">深度对话、策略分析、内容生成、自我探索</div>
+        <div class="tool-card-how">电脑端 + 手机端均可用，需开梯子</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-card-name">Gemini</div>
+        <div class="tool-card-desc">Google 生态搜索、多模态理解</div>
+        <div class="tool-card-how">已安装，需开梯子</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-card-name">ChatGPT</div>
+        <div class="tool-card-desc">通用对话、写作辅助</div>
+        <div class="tool-card-how">已安装，需开梯子</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-card-name">飞书妙记</div>
+        <div class="tool-card-desc">录音转文字，上课和会议的素材沉淀</div>
+        <div class="tool-card-how">电脑端 + 手机端均可录音，每月 300 分钟免费额度</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-card-name">飞书多维表格</div>
+        <div class="tool-card-desc">茶室管理：会员、出入库、财务记录</div>
+        <div class="tool-card-how">已看过模板演示，可直接使用</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-card-name">豆包 / DeepSeek</div>
+        <div class="tool-card-desc">日常快速问答，你已经熟悉的工具</div>
+        <div class="tool-card-how">继续用，国内模型能搞定的场景就用国内的</div>
+      </div>
+    </div>
+
+    <div class="tools-note">Claude 更适合深度对话和复杂分析，豆包更适合日常快速问答——两个不冲突，按场景选就好。你说跟 Claude 聊深度话题"跟你的性格很像"，那就对了，遇到想深聊、想理清的事情，找它。</div>
+  </div>
+
+  <hr class="div">
+
+  <!-- 05 后续 -->
+  <div class="section">
+    <div class="section-label">05</div>
+    <div class="section-title">后续可以探索的方向</div>
+
+    <div class="next-item">教学备课工作流跑通后，想把更多教学场景交给 AI（作文批改、学生反馈整理、教学复盘）</div>
+    <div class="next-item">茶室运营的完整管理系统搭建（财务、会员、绩效一体化）</div>
+    <div class="next-item">文创 IP 设计——用 AI 生成概念稿、对比风格、快速出原型</div>
+    <div class="next-item">个人内容输出（你已经开始做了——继续）</div>
+    <div class="next-item">想聊得更深的命理方向（事业节奏、关系、阶段选择）</div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="footer-text">慢慢来，<span class="accent">先做完一件事。</span></div>
+    <div class="footer-sig">— SHELL · 2026.06.08</div>
+  </div>
+
+</div>
+</div>
+</div>
+
+<script>
+var PASS_HASH = '2e498';
+
+function simpleHash(str) {
+  var h = 0;
+  for (var i = 0; i < str.length; i++) {
+    h = ((h << 5) - h) + str.charCodeAt(i);
+    h |= 0;
+  }
+  return Math.abs(h).toString(16).slice(0, 5);
+}
+
+function unlock() {
+  var input = document.getElementById('pwdInput').value;
+  if (simpleHash(input) === PASS_HASH || input === 'xinxin0608') {
+    var lock = document.getElementById('lockScreen');
+    var report = document.getElementById('reportWrap');
+    lock.classList.add('fading');
+    setTimeout(function() {
+      lock.style.display = 'none';
+      report.classList.add('visible');
+      window.scrollTo(0, 0);
+      setTimeout(function() { report.classList.add('shown'); }, 50);
+    }, 400);
+  } else {
+    document.getElementById('pwdError').textContent = '密码不正确，请重试';
+    document.getElementById('pwdInput').value = '';
+    document.getElementById('pwdInput').focus();
+  }
+}
+
+document.getElementById('pwdInput').addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') unlock();
+});
+document.getElementById('pwdInput').addEventListener('input', function() {
+  if (this.value === 'xinxin0608') unlock();
+});
+</script>
+
+</body>
+</html>
