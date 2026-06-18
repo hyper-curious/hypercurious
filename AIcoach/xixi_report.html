@@ -26,7 +26,9 @@
     align-items: center;
     justify-content: center;
     padding: 24px;
+    transition: opacity 0.4s ease;
   }
+  .lock-screen.fading { opacity: 0; }
   .lock-card {
     background: #f0ede6;
     padding: 48px 36px;
@@ -92,8 +94,11 @@
   .report-wrap {
     display: none;
     padding: 0 0 60px;
+    opacity: 0;
+    transition: opacity 0.5s ease;
   }
   .report-wrap.visible { display: block; }
+  .report-wrap.shown { opacity: 1; }
 
   .report {
     max-width: 640px;
@@ -304,11 +309,22 @@
 
   /* Mobile tweaks */
   @media (max-width: 480px) {
-    .report-title { font-size: 21px; }
-    .section-title { font-size: 16px; }
-    .insight-s { font-size: 13.5px; }
-    .tools td, .tools th { font-size: 10.5px; }
+    .report-title { font-size: 22px; }
+    .report-meta { font-size: 13px; }
+    .section-title { font-size: 18px; }
+    .subsection-title { font-size: 15px; }
+    .insight-s { font-size: 16px; }
+    .insight-b { font-size: 15px; line-height: 1.85; }
+    .insight-a { font-size: 15px; line-height: 1.85; }
+    .cg-title { font-size: 14px; }
+    .ci { font-size: 14px; }
+    .tl-title { font-size: 16px; }
+    .tl-body { font-size: 15px; line-height: 1.85; }
+    .tools td, .tools th { font-size: 13px; }
     .tools td:first-child { white-space: normal; }
+    .tools-note { font-size: 14px; }
+    .next-item { font-size: 14px; }
+    .footer-text { font-size: 14px; }
   }
 </style>
 </head>
@@ -528,9 +544,17 @@ function simpleHash(str) {
 function unlock() {
   var input = document.getElementById('pwdInput').value;
   if (simpleHash(input) === PASS_HASH || input === 'xixi0617') {
-    document.getElementById('lockScreen').style.display = 'none';
-    document.getElementById('reportWrap').classList.add('visible');
-    window.scrollTo(0, 0);
+    var lock = document.getElementById('lockScreen');
+    var report = document.getElementById('reportWrap');
+    // Fade out lock screen
+    lock.classList.add('fading');
+    setTimeout(function() {
+      lock.style.display = 'none';
+      report.classList.add('visible');
+      window.scrollTo(0, 0);
+      // Fade in report
+      setTimeout(function() { report.classList.add('shown'); }, 50);
+    }, 400);
   } else {
     document.getElementById('pwdError').textContent = '密码不正确，请重试';
     document.getElementById('pwdInput').value = '';
