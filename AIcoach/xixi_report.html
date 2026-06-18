@@ -656,6 +656,9 @@ function unlock() {
 document.getElementById('pwdInput').addEventListener('keypress', function(e) {
   if (e.key === 'Enter') unlock();
 });
+document.getElementById('pwdInput').addEventListener('input', function() {
+  if (this.value === 'xixi0617') unlock();
+});
 </script>
 
 </body>

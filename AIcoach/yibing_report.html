@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>怡冰 · AI私教服务交付报告</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #d5d0c8;
+    font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+    min-height: 100vh;
+    color: #1a1a1a;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Lock Screen ── */
+  .lock-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    transition: opacity 0.4s ease;
+  }
+  .lock-screen.fading { opacity: 0; }
+  .lock-card {
+    background: #f0ede6;
+    padding: 48px 36px;
+    max-width: 340px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.12);
+  }
+  .lock-brand {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 9px; letter-spacing: 3px; color: #999; margin-bottom: 24px;
+  }
+  .lock-title {
+    font-family: 'Noto Serif SC', serif;
+    font-weight: 900; font-size: 20px; margin-bottom: 8px;
+  }
+  .lock-sub { font-size: 12px; color: #888; margin-bottom: 28px; }
+  .lock-input {
+    width: 100%; padding: 12px 16px; border: 1px solid #1a1a1a;
+    background: transparent; font-family: 'Noto Sans SC', sans-serif;
+    font-size: 14px; text-align: center; letter-spacing: 4px;
+    outline: none; margin-bottom: 12px; transition: border-color 0.2s;
+  }
+  .lock-input:focus { border-color: #1B6B5A; }
+  .lock-input::placeholder { letter-spacing: 1px; color: #bbb; }
+  .lock-btn {
+    width: 100%; padding: 12px; background: #1a1a1a; color: #fff;
+    border: none; font-family: 'Noto Sans SC', sans-serif;
+    font-size: 13px; letter-spacing: 2px; cursor: pointer; transition: background 0.2s;
+  }
+  .lock-btn:hover { background: #1B6B5A; }
+  .lock-error { font-size: 11px; color: #c44; margin-top: 12px; min-height: 16px; }
+
+  /* ── Report ── */
+  .report-wrap {
+    display: none; padding: 0 0 60px;
+    opacity: 0; transition: opacity 0.5s ease;
+  }
+  .report-wrap.visible { display: block; }
+  .report-wrap.shown { opacity: 1; }
+
+  .report {
+    max-width: 640px; margin: 0 auto;
+    background: #f0ede6; box-shadow: 0 8px 40px rgba(0,0,0,0.12);
+  }
+  .report-inner { padding: 36px 28px; }
+
+  @media (max-width: 680px) {
+    .report { box-shadow: none; }
+    .report-inner { padding: 28px 20px; }
+    body { background: #f0ede6; }
+  }
+
+  /* Masthead */
+  .masthead {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    padding-bottom: 8px; border-bottom: 3px double #1a1a1a; margin-bottom: 28px;
+  }
+  .masthead span {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 8px; letter-spacing: 2px; color: #777;
+  }
+
+  /* Title */
+  .title-block { margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid #1a1a1a; }
+  .report-title {
+    font-family: 'Noto Serif SC', serif; font-weight: 900;
+    font-size: 24px; line-height: 1.25; letter-spacing: -0.5px; margin-bottom: 10px;
+  }
+  .accent { color: #1B6B5A; }
+  .report-meta { font-size: 11px; color: #888; line-height: 1.8; }
+
+  /* Sections */
+  .section { margin-bottom: 28px; }
+  .section-label {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 8px; letter-spacing: 3px; color: #999; text-transform: uppercase; margin-bottom: 4px;
+  }
+  .section-title {
+    font-family: 'Noto Serif SC', serif; font-weight: 900;
+    font-size: 17px; margin-bottom: 16px; padding-bottom: 8px;
+    border-bottom: 1px solid rgba(26,26,26,0.15);
+  }
+  .subsection-title {
+    font-family: 'Noto Serif SC', serif; font-weight: 700;
+    font-size: 13px; color: #1B6B5A; margin-bottom: 12px; letter-spacing: 0.5px;
+  }
+
+  /* Checklist */
+  .cg { margin-bottom: 14px; }
+  .cg-title { font-size: 11px; font-weight: 700; color: #1a1a1a; margin-bottom: 4px; }
+  .ci {
+    font-size: 12px; line-height: 1.7; color: #444;
+    padding: 2px 0 2px 18px; position: relative;
+  }
+  .ci::before {
+    content: '✓'; position: absolute; left: 0;
+    color: #1B6B5A; font-weight: 700; font-size: 11px;
+  }
+
+  /* Insights */
+  .insight { margin-bottom: 20px; }
+  .insight-s {
+    font-family: 'Noto Serif SC', serif; font-weight: 700;
+    font-size: 14px; color: #1a1a1a; line-height: 1.5; margin-bottom: 6px;
+  }
+  .insight-b { font-size: 12.5px; line-height: 1.8; color: #444; margin-bottom: 8px; }
+  .insight-a {
+    font-size: 12.5px; line-height: 1.75; color: #1B6B5A; font-weight: 500;
+    padding-left: 12px; border-left: 2px solid #1B6B5A;
+  }
+
+  /* Timeline with dots */
+  .tl { margin-bottom: 22px; padding-left: 24px; position: relative; }
+  .tl::before {
+    content: ''; position: absolute; left: 5px; top: 0; bottom: 0;
+    width: 2px; background: #1a1a1a;
+  }
+  .tl::after {
+    content: ''; position: absolute; left: 0; top: 6px;
+    width: 12px; height: 12px; border-radius: 50%; background: #1B6B5A;
+  }
+  .tl.muted::before { background: #ccc; }
+  .tl.muted::after { background: #ccc; }
+  .tl-label {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 9px; letter-spacing: 2px; color: #1B6B5A; font-weight: 700; margin-bottom: 3px;
+  }
+  .tl-title {
+    font-family: 'Noto Serif SC', serif; font-weight: 700;
+    font-size: 14px; margin-bottom: 5px;
+  }
+  .tl-body { font-size: 12.5px; line-height: 1.75; color: #444; }
+  .tl.muted .tl-label { color: #999; }
+
+  /* Tool cards */
+  .tool-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+  .tool-card { border: 1px solid rgba(26,26,26,0.15); padding: 14px; background: rgba(255,255,255,0.4); }
+  .tool-card-name { font-weight: 700; font-size: 13px; margin-bottom: 4px; }
+  .tool-card-desc { font-size: 12px; color: #666; line-height: 1.55; margin-bottom: 6px; }
+  .tool-card-how {
+    font-size: 11px; color: #999; line-height: 1.5;
+    padding-top: 6px; border-top: 1px dotted rgba(26,26,26,0.15);
+  }
+  .tools-note { font-size: 12px; color: #666; line-height: 1.75; }
+
+  /* Next */
+  .next-item {
+    font-size: 12px; line-height: 1.65; color: #444;
+    padding: 6px 0; border-bottom: 1px dotted rgba(26,26,26,0.15);
+  }
+  .next-item:last-child { border-bottom: none; }
+
+  /* Divider */
+  .div { border: none; border-top: 1px solid rgba(26,26,26,0.15); margin: 24px 0; }
+
+  /* Footer */
+  .footer {
+    margin-top: 32px; padding-top: 14px;
+    border-top: 3px double #1a1a1a; text-align: center;
+  }
+  .footer-text { font-family: 'Noto Serif SC', serif; font-size: 12px; color: #888; }
+  .footer-sig {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 8px; letter-spacing: 2px; color: #999; margin-top: 10px;
+  }
+
+  /* Mobile tweaks */
+  @media (max-width: 480px) {
+    .report-title { font-size: 22px; }
+    .report-meta { font-size: 13px; }
+    .section-title { font-size: 18px; }
+    .subsection-title { font-size: 15px; }
+    .insight-s { font-size: 16px; }
+    .insight-b { font-size: 15px; line-height: 1.85; }
+    .insight-a { font-size: 15px; line-height: 1.85; }
+    .cg-title { font-size: 14px; }
+    .ci { font-size: 14px; }
+    .tl-title { font-size: 16px; }
+    .tl-body { font-size: 15px; line-height: 1.85; }
+    .tools-note { font-size: 14px; }
+    .next-item { font-size: 14px; }
+    .footer-text { font-size: 14px; }
+    .tool-grid { grid-template-columns: 1fr; }
+    .tool-card-name { font-size: 15px; }
+    .tool-card-desc { font-size: 14px; }
+    .tool-card-how { font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Lock Screen -->
+<div class="lock-screen" id="lockScreen">
+  <div class="lock-card">
+    <div class="lock-brand">SHELL · AI私教</div>
+    <div class="lock-title">交付报告</div>
+    <div class="lock-sub">请输入密码查看</div>
+    <input class="lock-input" id="pwdInput" type="password" placeholder="密码" autofocus>
+    <button class="lock-btn" onclick="unlock()">查看报告</button>
+    <div class="lock-error" id="pwdError"></div>
+  </div>
+</div>
+
+<!-- Report -->
+<div class="report-wrap" id="reportWrap">
+<div class="report">
+<div class="report-inner">
+
+  <!-- Masthead -->
+  <div class="masthead">
+    <span>SHELL · AI私教</span>
+    <span>交付报告 · 2026.06.17</span>
+  </div>
+
+  <!-- Title -->
+  <div class="title-block">
+    <div class="report-title">怡冰 · <span class="accent">AI私教</span>服务交付</div>
+    <div class="report-meta">
+      日期：2026 年 6 月 17 日<br>
+      服务内容：AI 环境搭建 + 命理分析<br>
+      教练：Shell（贝林）
+    </div>
+  </div>
+
+  <!-- 01 交付清单 -->
+  <div class="section">
+    <div class="section-label">01</div>
+    <div class="section-title">今日交付清单</div>
+
+    <div class="cg">
+      <div class="cg-title">账号与访问</div>
+      <div class="ci">Claude Pro 账号注册 + 订阅开通（淘宝代充，月付）</div>
+      <div class="ci">电脑端：Claude 客户端 + 网页端均可使用</div>
+      <div class="ci">手机端：海外 App Store 下载 Claude App</div>
+      <div class="ci">Shadowrocket 梯子配置（替换原 VEE，支持 Claude 访问）</div>
+    </div>
+    <div class="cg">
+      <div class="cg-title">记忆与上下文</div>
+      <div class="ci">记忆功能开启（Claude 会跨对话记住你的背景信息）</div>
+      <div class="ci">跨对话搜索开启（新对话中可以搜索历史对话内容）</div>
+      <div class="ci">24-25 年日记 / 思考笔记导入（30MB Word → 1.7MB Markdown，Claude 已读取）</div>
+    </div>
+    <div class="cg">
+      <div class="cg-title">配套工具</div>
+      <div class="ci">Obsidian 知识库激活（你电脑上已有，现在知道怎么用了）</div>
+      <div class="ci">豆包输入法安装（语音输入，跟 Claude 对话时说话比打字快）</div>
+      <div class="ci">视频转文字工具推荐（小红书 / B 站 / 抖音视频转文字喂给 Claude）</div>
+    </div>
+    <div class="cg">
+      <div class="cg-title">命理分析</div>
+      <div class="ci">你的盘 × 你的路（纯盘面解读，PDF + MD）</div>
+      <div class="ci">破局之法 × 补益方案（MD）</div>
+      <div class="ci">命理报告 · 人话版（结合你的上下文，PDF + MD）</div>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <!-- 02 洞察：现状 -->
+  <div class="section">
+    <div class="section-label">02</div>
+    <div class="section-title">关于你的洞察</div>
+
+    <div class="subsection-title">你的现状</div>
+
+    <div class="insight">
+      <div class="insight-s">你什么都不缺，就缺按下发布键。</div>
+      <div class="insight-b">你有审美、有厨艺、有法务专业背景、有执行力（阿诤说你是"做过咨询里面执行力最强的人"）、有两年的日记和思考积累。视频拍了，也在剪。但还没发。卡在"觉得还要再准备一下"。准备得够多了，差的只是按下那个键。</div>
+    </div>
+
+    <div class="insight">
+      <div class="insight-s">有人推你的时候，你执行力碾压大多数人。</div>
+      <div class="insight-b">阿诤告诉你怎么改软装，你一周搞定。有明确指令的时候你完全不拖。但没人推的时候，你就陷入吸收模式——播客、B 站、公众号、群聊，不停地看、不停地存、不停地想，就是不出手。你知道 GPT 的问题在哪吗？它太顺着你了，你需要的不是被哄，是被推。</div>
+    </div>
+
+    <div class="insight">
+      <div class="insight-s">你的日记比你以为的值钱得多。</div>
+      <div class="insight-b">几万字的思考、想法、心情记录，你觉得"比较杂乱"。但 Claude 读完后说"你自己写的可比你收藏的公众号文章有深度"——那些日记里有你的价值观、审美判断、生活哲学，这些就是你做内容的原材料，不用另外去找。</div>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <!-- 02续 洞察：现场观察 -->
+  <div class="section">
+    <div class="subsection-title">我在现场看见的你</div>
+
+    <div class="insight">
+      <div class="insight-s">你看到 Claude 做设计的时候眼睛亮了。</div>
+      <div class="insight-b">海报、报价单、视觉排版——你对这些的兴奋度明显高于其他功能。你的能量区在视觉和创意，美食内容方向选对了，因为那就是视觉 + 创意 + 生活审美的交叉点。</div>
+      <div class="insight-a">你可以拍完视频后先让 Claude 帮你出封面图和标题方案，用它的设计能力降低你"发出去丢人"的心理门槛。</div>
+    </div>
+
+    <div class="insight">
+      <div class="insight-s">你说 GPT"越来越讨好，后来懒得跟它聊了"。</div>
+      <div class="insight-b">大多数人觉得 AI 不够好是嫌它笨，你是嫌它不敢说真话。你需要的是一个敢推你的搭档。Claude 比 GPT 直。</div>
+      <div class="insight-a">你可以在 Claude 的记忆里加一条："我需要你直接、不要讨好我、该推我的时候推我。"它会记住。</div>
+    </div>
+
+    <div class="insight">
+      <div class="insight-s">你的"想太多"不是敌人，是放错了岗位的员工。</div>
+      <div class="insight-b">这个特质帮你在复杂的法务工作里找到安全位置，帮你理解别人理解不了的东西。问题不是想太多本身，是你在该动手的时候也在想。</div>
+      <div class="insight-a">你可以给自己一个规则：做决定之前随便想（设个截止时间），做事的时候不想，做完再复盘时随便想。把"想"安排在事前和事后，中间留给执行。</div>
+    </div>
+
+    <div class="insight">
+      <div class="insight-s">你吸收信息的量远远超过你输出的量。</div>
+      <div class="insight-b">B 站稍后再看 900 多个、播客列表快 100 个、公众号文章随手存。你不缺输入，你缺的是把吸收的东西转化成自己的表达。</div>
+
+      <!-- 现在的模式 -->
+      <div style="margin: 16px 0 12px;">
+        <div style="font-family:ui-monospace,monospace;font-size:9px;letter-spacing:2px;color:#999;font-weight:700;margin-bottom:10px;">现在</div>
+        <div style="display:flex;align-items:center;gap:0;">
+          <div style="flex:1;text-align:center;padding:12px 6px;border:1px solid rgba(26,26,26,0.15);background:rgba(255,255,255,0.4);">
+            <div style="font-size:20px;margin-bottom:4px;">📥</div>
+            <div style="font-size:13px;font-weight:700;">吸收</div>
+            <div style="font-size:11px;color:#888;margin-top:3px;line-height:1.4;">B站 900+<br>播客 100+<br>公众号随手存</div>
+          </div>
+          <div style="width:22px;text-align:center;color:#ccc;font-size:14px;">→</div>
+          <div style="flex:1;text-align:center;padding:12px 6px;border:2px solid #c44;background:rgba(204,68,68,0.04);">
+            <div style="font-size:20px;margin-bottom:4px;">🔄</div>
+            <div style="font-size:13px;font-weight:700;color:#c44;">想太多</div>
+            <div style="font-size:11px;color:#888;margin-top:3px;line-height:1.4;">还要再准备<br>觉得不够好<br>万一丢人</div>
+          </div>
+          <div style="width:22px;text-align:center;color:#c44;font-weight:900;font-size:14px;">✕</div>
+          <div style="flex:1;text-align:center;padding:12px 6px;border:2px dashed #ccc;">
+            <div style="font-size:20px;margin-bottom:4px;">📤</div>
+            <div style="font-size:13px;font-weight:700;color:#ccc;">输出</div>
+            <div style="font-size:11px;color:#ccc;margin-top:3px;line-height:1.4;">拍了<br>在剪<br>没发</div>
+          </div>
+        </div>
+        <div style="text-align:center;font-size:11px;color:#999;margin-top:8px;">信息进来了，卡在脑子里，出不去</div>
+      </div>
+
+      <!-- 修复后 -->
+      <div style="margin: 16px 0 12px;">
+        <div style="font-family:ui-monospace,monospace;font-size:9px;letter-spacing:2px;color:#1B6B5A;font-weight:700;margin-bottom:10px;">修复后</div>
+        <div style="display:flex;align-items:center;gap:0;">
+          <div style="flex:1;text-align:center;padding:12px 6px;border:1px solid rgba(26,26,26,0.15);background:rgba(255,255,255,0.4);">
+            <div style="font-size:20px;margin-bottom:4px;">📥</div>
+            <div style="font-size:13px;font-weight:700;">吸收</div>
+            <div style="font-size:11px;color:#888;margin-top:3px;line-height:1.4;">看到有感触的<br>视频 / 文章 / 播客</div>
+          </div>
+          <div style="width:22px;text-align:center;color:#1B6B5A;font-size:14px;">→</div>
+          <div style="flex:1;text-align:center;padding:12px 6px;border:2px solid #1B6B5A;background:rgba(27,107,90,0.04);">
+            <div style="font-size:20px;margin-bottom:4px;">🗣</div>
+            <div style="font-size:13px;font-weight:700;color:#1B6B5A;">三句话<br>说给 Claude</div>
+            <div style="font-size:11px;color:#888;margin-top:3px;line-height:1.4;">讲了什么<br>我同意什么<br>我不同意什么</div>
+          </div>
+          <div style="width:22px;text-align:center;color:#1B6B5A;font-size:14px;">→</div>
+          <div style="flex:1;text-align:center;padding:12px 6px;border:2px solid #1B6B5A;background:rgba(27,107,90,0.04);">
+            <div style="font-size:20px;margin-bottom:4px;">📤</div>
+            <div style="font-size:13px;font-weight:700;color:#1B6B5A;">直接发</div>
+            <div style="font-size:11px;color:#888;margin-top:3px;line-height:1.4;">朋友圈<br>小红书<br>公众号</div>
+          </div>
+        </div>
+        <div style="text-align:center;font-size:11px;color:#999;margin-top:8px;">绕过"想太多"，<span style="color:#1B6B5A;font-weight:700;">吸收完就输出</span></div>
+      </div>
+
+      <div class="insight-a">你可以从今天开始，每次看完一个让你有感触的视频或文章，打开 Claude 用语音说三句话：这个讲了什么、我同意什么、我不同意什么。说完就发朋友圈或小红书。不用写长文，三句话就够。</div>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <!-- 03 行动建议 -->
+  <div class="section">
+    <div class="section-label">03</div>
+    <div class="section-title">行动建议</div>
+
+    <div class="tl">
+      <div class="tl-label">本周</div>
+      <div class="tl-title">发出去</div>
+      <div class="tl-body">你已经拍了视频，也在剪。选一条你觉得"还行但不够完美"的，发出去。不用选最好的，选最快能发的。发完把链接扔给 Claude，让它帮你分析评论区反馈和改进方向。如果实在卡住，找一个人约好发布时间——"周五之前我发一条，你监督我"。你的执行力在有外部推力的时候是最强的。</div>
+    </div>
+
+    <div class="tl">
+      <div class="tl-label">两周内</div>
+      <div class="tl-title">建立输出习惯</div>
+      <div class="tl-body">每天用 Claude 做一次"吸收转输出"练习：看完视频/文章/播客 → 语音跟 Claude 说感想 → 整理成一段话 → 发出去（朋友圈、小红书、公众号都算）。从每天一条开始，不求质量，先把"发出去"变成肌肉记忆。同时把 25-26 年的日记和思考补进 Claude——让它越来越了解你，给你的建议就会越来越准。</div>
+    </div>
+
+    <div class="tl">
+      <div class="tl-label">一个月内</div>
+      <div class="tl-title">定方向</div>
+      <div class="tl-body">你已经有了几万字日记 + 命理报告 + Claude 的洞察，再加上两周的输出练习，到时候回过头来看：你发出去的内容里，哪些数据好？哪些你自己做着开心？这两个重叠的地方就是你的方向。到时候可以再约一次，我帮你做一次正式的诊断——从你的日记、你的输出数据、你和 Claude 的对话记录里，拉出你的能力模式和内容定位。</div>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <!-- 04 工具箱 -->
+  <div class="section">
+    <div class="section-label">04</div>
+    <div class="section-title">你的工具箱</div>
+
+    <div class="tool-grid">
+      <div class="tool-card">
+        <div class="tool-card-name">Claude 电脑端</div>
+        <div class="tool-card-desc">策略分析、文案、设计、深度对话</div>
+        <div class="tool-card-how">桌面客户端或 claude.ai，需开梯子</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-card-name">Claude 手机端</div>
+        <div class="tool-card-desc">随时记录想法、语音输入聊天</div>
+        <div class="tool-card-how">App Store 下载 Claude App，需开梯子</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-card-name">Obsidian</div>
+        <div class="tool-card-desc">存 Claude 产出、管理日记和笔记</div>
+        <div class="tool-card-how">桌面应用，文件存本地，可手机同步</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-card-name">视频转文字</div>
+        <div class="tool-card-desc">小红书/B站/抖音视频转文字喂给 Claude</div>
+        <div class="tool-card-how">微信内置顶使用，链接转发即可</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-card-name">豆包输入法</div>
+        <div class="tool-card-desc">语音输入，说话比打字快</div>
+        <div class="tool-card-how">已安装，切换输入法即可</div>
+      </div>
+    </div>
+
+    <div class="tools-note">你之前用 GPT 是分板块聊（个人 / 理财 / 事业），在 Claude 上也可以这样——不同话题开不同对话，但记忆是跨对话共享的，所以它始终知道你是谁。你不用每次重新介绍自己了。</div>
+  </div>
+
+  <hr class="div">
+
+  <!-- 05 后续 -->
+  <div class="section">
+    <div class="section-label">05</div>
+    <div class="section-title">后续可以探索的方向</div>
+
+    <div class="next-item">发了 10 条以上内容，想做一次正式的诊断和方向定位</div>
+    <div class="next-item">想把法务专业能力和美食内容做结合</div>
+    <div class="next-item">需要系统化的内容工作流搭建（选题 → 拍摄 → 剪辑 → 发布 → 复盘）</div>
+    <div class="next-item">想聊得更深的命理方向（事业节奏、关系、阶段选择）</div>
+    <div class="next-item">想把 Claude 用到法务主业的提效上</div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="footer-text">祝一切顺利，<span class="accent">先发 10 条，其他的都是后面的事。</span></div>
+    <div class="footer-sig">— SHELL · 2026.06.17</div>
+  </div>
+
+</div>
+</div>
+</div>
+
+<script>
+function unlock() {
+  var input = document.getElementById('pwdInput').value;
+  if (input === 'yibing0617') {
+    var lock = document.getElementById('lockScreen');
+    var report = document.getElementById('reportWrap');
+    lock.classList.add('fading');
+    setTimeout(function() {
+      lock.style.display = 'none';
+      report.classList.add('visible');
+      window.scrollTo(0, 0);
+      setTimeout(function() { report.classList.add('shown'); }, 50);
+    }, 400);
+  } else {
+    document.getElementById('pwdError').textContent = '密码不正确，请重试';
+    document.getElementById('pwdInput').value = '';
+    document.getElementById('pwdInput').focus();
+  }
+}
+
+document.getElementById('pwdInput').addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') unlock();
+});
+document.getElementById('pwdInput').addEventListener('input', function() {
+  if (this.value === 'yibing0617') unlock();
+});
+</script>
+
+</body>
+</html>
