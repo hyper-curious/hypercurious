@@ -224,7 +224,28 @@
   }
 
   /* Timeline */
-  .tl { margin-bottom: 20px; padding-left: 18px; border-left: 2px solid #1a1a1a; }
+  .tl { margin-bottom: 22px; padding-left: 24px; position: relative; }
+  .tl::before {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #1a1a1a;
+  }
+  .tl::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 6px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #1B6B5A;
+  }
+  .tl.muted::before { background: #ccc; }
+  .tl.muted::after { background: #ccc; }
   .tl-label {
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
     font-size: 9px;
@@ -244,34 +265,55 @@
     line-height: 1.75;
     color: #444;
   }
-  .tl.muted { border-left-color: #ccc; }
   .tl.muted .tl-label { color: #999; }
 
-  /* Tool table */
-  .tools { width: 100%; border-collapse: collapse; margin-bottom: 14px; }
-  .tools th {
-    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-    font-size: 8px;
-    letter-spacing: 2px;
-    color: #999;
-    text-transform: uppercase;
-    text-align: left;
-    padding: 6px 6px 6px 0;
-    border-bottom: 1px solid #1a1a1a;
+  /* Lifecycle timeline */
+  .lifecycle { position: relative; padding: 0 0 16px; }
+  .lc-line {
+    display: flex;
+    position: relative;
+    padding: 60px 0 40px;
   }
-  .tools td {
-    font-size: 11.5px;
-    color: #444;
-    padding: 7px 6px 7px 0;
-    border-bottom: 1px dotted rgba(26,26,26,0.2);
-    vertical-align: top;
-    line-height: 1.55;
+  .lc-line::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #1B6B5A;
+    transform: translateY(-50%);
   }
-  .tools td:first-child { font-weight: 700; color: #1a1a1a; white-space: nowrap; }
-  .tools-note {
-    font-size: 12px;
-    color: #666;
-    line-height: 1.75;
+  .lc-node { flex: 1; text-align: center; position: relative; }
+  .lc-dot {
+    width: 14px; height: 14px; border-radius: 50%;
+    background: #1B6B5A; margin: 0 auto; position: relative; z-index: 1;
+  }
+  .lc-dot.hollow { background: #f0ede6; border: 2px solid #ccc; }
+  .lc-above {
+    position: absolute; bottom: 100%; left: 50%;
+    transform: translateX(-50%); padding-bottom: 12px; white-space: nowrap;
+  }
+  .lc-age {
+    font-family: ui-monospace, monospace; font-size: 10px;
+    color: #1B6B5A; font-weight: 700; letter-spacing: 1px; margin-bottom: 2px;
+  }
+  .lc-label { font-size: 12px; font-weight: 700; color: #1a1a1a; line-height: 1.4; }
+  .lc-below {
+    position: absolute; top: 100%; left: 50%;
+    transform: translateX(-50%); padding-top: 12px; white-space: nowrap;
+  }
+  .lc-biz { font-size: 11px; color: #888; line-height: 1.4; }
+  .lc-biz.active { color: #1B6B5A; font-weight: 500; }
+
+  /* Tool cards */
+  .tool-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+  .tool-card { border: 1px solid rgba(26,26,26,0.15); padding: 14px; background: rgba(255,255,255,0.4); }
+  .tool-card-name { font-weight: 700; font-size: 13px; margin-bottom: 4px; }
+  .tool-card-desc { font-size: 12px; color: #666; line-height: 1.55; margin-bottom: 6px; }
+  .tool-card-how {
+    font-size: 11px; color: #999; line-height: 1.5;
+    padding-top: 6px; border-top: 1px dotted rgba(26,26,26,0.15);
   }
 
   /* Next */
@@ -320,11 +362,18 @@
     .ci { font-size: 14px; }
     .tl-title { font-size: 16px; }
     .tl-body { font-size: 15px; line-height: 1.85; }
-    .tools td, .tools th { font-size: 13px; }
-    .tools td:first-child { white-space: normal; }
     .tools-note { font-size: 14px; }
     .next-item { font-size: 14px; }
     .footer-text { font-size: 14px; }
+    .lc-age { font-size: 11px; }
+    .lc-label { font-size: 13px; }
+    .lc-biz { font-size: 12px; }
+    .lc-above { white-space: normal; width: 72px; text-align: center; }
+    .lc-below { white-space: normal; width: 72px; text-align: center; }
+    .tool-grid { grid-template-columns: 1fr; }
+    .tool-card-name { font-size: 15px; }
+    .tool-card-desc { font-size: 14px; }
+    .tool-card-how { font-size: 13px; }
   }
 </style>
 </head>
@@ -406,6 +455,30 @@
     <div class="insight">
       <div class="insight-s">三条线，其实是一件事。</div>
       <div class="insight-b">大健康、养老、个人 IP 三条线之间有一条暗线——从年轻女性健康 → 孕产 → 中年女性 → 50+ 养老，是同一群人的生命周期。三条线合在一起，覆盖的其实是女性全生命周期的健康需求。一旦这个视角立住了，产品矩阵有逻辑、IP 方向有话讲、养老也成了同一条线的延伸。</div>
+      <div class="lifecycle">
+        <div class="lc-line">
+          <div class="lc-node">
+            <div class="lc-above"><div class="lc-age">20-30</div><div class="lc-label">年轻女性健康</div></div>
+            <div class="lc-dot"></div>
+            <div class="lc-below"><div class="lc-biz active">↑ 大健康产品</div></div>
+          </div>
+          <div class="lc-node">
+            <div class="lc-above"><div class="lc-age">25-35</div><div class="lc-label">孕产</div></div>
+            <div class="lc-dot"></div>
+            <div class="lc-below"><div class="lc-biz active">↑ 你现在在这</div></div>
+          </div>
+          <div class="lc-node">
+            <div class="lc-above"><div class="lc-age">35-50</div><div class="lc-label">中年女性</div></div>
+            <div class="lc-dot hollow"></div>
+            <div class="lc-below"><div class="lc-biz">空白</div></div>
+          </div>
+          <div class="lc-node">
+            <div class="lc-above"><div class="lc-age">50+</div><div class="lc-label">养老</div></div>
+            <div class="lc-dot"></div>
+            <div class="lc-below"><div class="lc-biz active">↑ 养老服务</div></div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="insight">
@@ -489,15 +562,33 @@
     <div class="section-label">04</div>
     <div class="section-title">你的工具箱</div>
 
-    <table class="tools">
-      <tr><th>工具</th><th>用来做什么</th><th>怎么打开</th></tr>
-      <tr><td>Claude 电脑端</td><td>策略分析、文案、上下文对话、深度思考</td><td>桌面客户端或 claude.ai，需开梯子</td></tr>
-      <tr><td>Claude 手机端</td><td>随时记录想法、语音输入聊天</td><td>App Store 下载 Claude App，需开梯子</td></tr>
-      <tr><td>Obsidian</td><td>存 Claude 产出、本地知识库管理</td><td>桌面应用，文件存本地，可手机同步</td></tr>
-      <tr><td>飞书录音豆</td><td>录音转文字，生成可喂给 Claude 的素材</td><td>录制后自动沉淀到飞书 App，有会员赠送</td></tr>
-      <tr><td>视频转文字</td><td>小红书/B站/抖音视频转文字喂给 Claude</td><td>微信内置顶使用，链接转发即可</td></tr>
-      <tr><td>豆包输入法</td><td>语音输入，说话比打字快</td><td>已安装，切换输入法即可</td></tr>
-    </table>
+    <div class="tool-grid">
+      <div class="tool-card">
+        <div class="tool-card-name">Claude 电脑端</div>
+        <div class="tool-card-desc">策略分析、文案、上下文对话、深度思考</div>
+        <div class="tool-card-how">桌面客户端或 claude.ai，需开梯子</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-card-name">Claude 手机端</div>
+        <div class="tool-card-desc">随时记录想法、语音输入聊天</div>
+        <div class="tool-card-how">App Store 下载 Claude App，需开梯子</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-card-name">Obsidian</div>
+        <div class="tool-card-desc">存 Claude 产出、本地知识库管理</div>
+        <div class="tool-card-how">桌面应用，文件存本地，可手机同步</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-card-name">飞书录音豆</div>
+        <div class="tool-card-desc">录音转文字，生成可喂给 Claude 的素材</div>
+        <div class="tool-card-how">录制后自动沉淀到飞书 App，有会员赠送</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-card-name">豆包输入法</div>
+        <div class="tool-card-desc">语音输入，说话比打字快</div>
+        <div class="tool-card-how">已安装，切换输入法即可</div>
+      </div>
+    </div>
 
     <div class="tools-note">你说最想要的是"私人 AI 外脑"。现在的用法是每天把你在做的事、想到的东西、和人聊的内容喂给 Claude，让它越来越了解你。你提到的"睡前告诉他明天计划，起床先说一遍"——现在就可以开始做。</div>
   </div>
@@ -512,7 +603,7 @@
     <div class="next-item">业务地图画完了，想深入拆某一条线的策略</div>
     <div class="next-item">小红书定位确定了，想搭建系统化的内容工作流</div>
     <div class="next-item">团队的 AI 工作流搭建（把你验证过的用法复制给团队）</div>
-    <div class="next-item">先生的养老方向需要 AI 辅助做市场调研 / 政府资质分析</div>
+    <div class="next-item">养老方向需要 AI 辅助做市场调研 / 资质分析</div>
     <div class="next-item">想聊得更深的命理方向（事业规划、关系、阶段选择）</div>
   </div>
 
