@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>汐汐 · AI私教服务交付报告</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #d5d0c8;
+    font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+    min-height: 100vh;
+    color: #1a1a1a;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Lock Screen ── */
+  .lock-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .lock-card {
+    background: #f0ede6;
+    padding: 48px 36px;
+    max-width: 340px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.12);
+  }
+  .lock-brand {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: #999;
+    margin-bottom: 24px;
+  }
+  .lock-title {
+    font-family: 'Noto Serif SC', serif;
+    font-weight: 900;
+    font-size: 20px;
+    margin-bottom: 8px;
+  }
+  .lock-sub {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 28px;
+  }
+  .lock-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #1a1a1a;
+    background: transparent;
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 14px;
+    text-align: center;
+    letter-spacing: 4px;
+    outline: none;
+    margin-bottom: 12px;
+    transition: border-color 0.2s;
+  }
+  .lock-input:focus { border-color: #1B6B5A; }
+  .lock-input::placeholder { letter-spacing: 1px; color: #bbb; }
+  .lock-btn {
+    width: 100%;
+    padding: 12px;
+    background: #1a1a1a;
+    color: #fff;
+    border: none;
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 13px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .lock-btn:hover { background: #1B6B5A; }
+  .lock-error {
+    font-size: 11px;
+    color: #c44;
+    margin-top: 12px;
+    min-height: 16px;
+  }
+
+  /* ── Report ── */
+  .report-wrap {
+    display: none;
+    padding: 0 0 60px;
+  }
+  .report-wrap.visible { display: block; }
+
+  .report {
+    max-width: 640px;
+    margin: 0 auto;
+    background: #f0ede6;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.12);
+  }
+  .report-inner { padding: 36px 28px; }
+
+  @media (max-width: 680px) {
+    .report { box-shadow: none; }
+    .report-inner { padding: 28px 20px; }
+    body { background: #f0ede6; }
+  }
+
+  /* Masthead */
+  .masthead {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding-bottom: 8px;
+    border-bottom: 3px double #1a1a1a;
+    margin-bottom: 28px;
+  }
+  .masthead span {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 8px;
+    letter-spacing: 2px;
+    color: #777;
+  }
+
+  /* Title */
+  .title-block { margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid #1a1a1a; }
+  .report-title {
+    font-family: 'Noto Serif SC', serif;
+    font-weight: 900;
+    font-size: 24px;
+    line-height: 1.25;
+    letter-spacing: -0.5px;
+    margin-bottom: 10px;
+  }
+  .accent { color: #1B6B5A; }
+  .report-meta {
+    font-size: 11px;
+    color: #888;
+    line-height: 1.8;
+  }
+
+  /* Sections */
+  .section { margin-bottom: 28px; }
+  .section-label {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 8px;
+    letter-spacing: 3px;
+    color: #999;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .section-title {
+    font-family: 'Noto Serif SC', serif;
+    font-weight: 900;
+    font-size: 17px;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(26,26,26,0.15);
+  }
+  .subsection-title {
+    font-family: 'Noto Serif SC', serif;
+    font-weight: 700;
+    font-size: 13px;
+    color: #1B6B5A;
+    margin-bottom: 12px;
+    letter-spacing: 0.5px;
+  }
+
+  /* Checklist */
+  .cg { margin-bottom: 14px; }
+  .cg-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 4px;
+  }
+  .ci {
+    font-size: 12px;
+    line-height: 1.7;
+    color: #444;
+    padding: 2px 0 2px 18px;
+    position: relative;
+  }
+  .ci::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: #1B6B5A;
+    font-weight: 700;
+    font-size: 11px;
+  }
+
+  /* Insights */
+  .insight { margin-bottom: 20px; }
+  .insight-s {
+    font-family: 'Noto Serif SC', serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: #1a1a1a;
+    line-height: 1.5;
+    margin-bottom: 6px;
+  }
+  .insight-b {
+    font-size: 12.5px;
+    line-height: 1.8;
+    color: #444;
+    margin-bottom: 8px;
+  }
+  .insight-a {
+    font-size: 12.5px;
+    line-height: 1.75;
+    color: #1B6B5A;
+    font-weight: 500;
+    padding-left: 12px;
+    border-left: 2px solid #1B6B5A;
+  }
+
+  /* Timeline */
+  .tl { margin-bottom: 20px; padding-left: 18px; border-left: 2px solid #1a1a1a; }
+  .tl-label {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: #1B6B5A;
+    font-weight: 700;
+    margin-bottom: 3px;
+  }
+  .tl-title {
+    font-family: 'Noto Serif SC', serif;
+    font-weight: 700;
+    font-size: 14px;
+    margin-bottom: 5px;
+  }
+  .tl-body {
+    font-size: 12.5px;
+    line-height: 1.75;
+    color: #444;
+  }
+  .tl.muted { border-left-color: #ccc; }
+  .tl.muted .tl-label { color: #999; }
+
+  /* Tool table */
+  .tools { width: 100%; border-collapse: collapse; margin-bottom: 14px; }
+  .tools th {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 8px;
+    letter-spacing: 2px;
+    color: #999;
+    text-transform: uppercase;
+    text-align: left;
+    padding: 6px 6px 6px 0;
+    border-bottom: 1px solid #1a1a1a;
+  }
+  .tools td {
+    font-size: 11.5px;
+    color: #444;
+    padding: 7px 6px 7px 0;
+    border-bottom: 1px dotted rgba(26,26,26,0.2);
+    vertical-align: top;
+    line-height: 1.55;
+  }
+  .tools td:first-child { font-weight: 700; color: #1a1a1a; white-space: nowrap; }
+  .tools-note {
+    font-size: 12px;
+    color: #666;
+    line-height: 1.75;
+  }
+
+  /* Next */
+  .next-item {
+    font-size: 12px;
+    line-height: 1.65;
+    color: #444;
+    padding: 6px 0;
+    border-bottom: 1px dotted rgba(26,26,26,0.15);
+  }
+  .next-item:last-child { border-bottom: none; }
+
+  /* Divider */
+  .div { border: none; border-top: 1px solid rgba(26,26,26,0.15); margin: 24px 0; }
+
+  /* Footer */
+  .footer {
+    margin-top: 32px;
+    padding-top: 14px;
+    border-top: 3px double #1a1a1a;
+    text-align: center;
+  }
+  .footer-text {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 12px;
+    color: #888;
+  }
+  .footer-sig {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 8px;
+    letter-spacing: 2px;
+    color: #999;
+    margin-top: 10px;
+  }
+
+  /* Mobile tweaks */
+  @media (max-width: 480px) {
+    .report-title { font-size: 21px; }
+    .section-title { font-size: 16px; }
+    .insight-s { font-size: 13.5px; }
+    .tools td, .tools th { font-size: 10.5px; }
+    .tools td:first-child { white-space: normal; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Lock Screen -->
+<div class="lock-screen" id="lockScreen">
+  <div class="lock-card">
+    <div class="lock-brand">SHELL · AI私教</div>
+    <div class="lock-title">交付报告</div>
+    <div class="lock-sub">请输入密码查看</div>
+    <input class="lock-input" id="pwdInput" type="password" placeholder="密码" autofocus>
+    <button class="lock-btn" onclick="unlock()">查看报告</button>
+    <div class="lock-error" id="pwdError"></div>
+  </div>
+</div>
+
+<!-- Report -->
+<div class="report-wrap" id="reportWrap">
+<div class="report">
+<div class="report-inner">
+
+  <!-- Masthead -->
+  <div class="masthead">
+    <span>SHELL · AI私教</span>
+    <span>交付报告 · 2026.06.17</span>
+  </div>
+
+  <!-- Title -->
+  <div class="title-block">
+    <div class="report-title">汐汐 · <span class="accent">AI私教</span>服务交付</div>
+    <div class="report-meta">
+      日期：2026 年 6 月 17 日<br>
+      服务内容：诊断 + AI 环境搭建 + 命理分析<br>
+      教练：Shell（贝林）
+    </div>
+  </div>
+
+  <!-- 01 交付清单 -->
+  <div class="section">
+    <div class="section-label">01</div>
+    <div class="section-title">今日交付清单</div>
+
+    <div class="cg">
+      <div class="cg-title">账号与访问</div>
+      <div class="ci">Claude Pro 账号注册 + 订阅开通（淘宝代充，月付）</div>
+      <div class="ci">电脑端：Claude 客户端 + 网页端均可使用</div>
+      <div class="ci">手机端：海外 App Store 下载 Claude App</div>
+    </div>
+    <div class="cg">
+      <div class="cg-title">记忆与上下文</div>
+      <div class="ci">记忆功能开启（Claude 会跨对话记住你的背景信息）</div>
+      <div class="ci">跨对话搜索开启（新对话中可以搜索历史对话内容）</div>
+      <div class="ci">个人上下文初始化完成（已写入 10+ 条核心记忆）</div>
+    </div>
+    <div class="cg">
+      <div class="cg-title">配套工具</div>
+      <div class="ci">Obsidian 知识库安装（本地文件管理，可和 Claude 配合）</div>
+      <div class="ci">飞书录音豆推荐（录制后自动沉淀到飞书 App，有会员赠送）</div>
+      <div class="ci">豆包输入法（语音输入，跟 Claude 对话时说话比打字快）</div>
+    </div>
+    <div class="cg">
+      <div class="cg-title">诊断 + 命理</div>
+      <div class="ci">初步诊断报告</div>
+      <div class="ci">行动计划</div>
+      <div class="ci">AI 命理报告</div>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <!-- 02 洞察：业务结构 -->
+  <div class="section">
+    <div class="section-label">02</div>
+    <div class="section-title">关于你的洞察</div>
+
+    <div class="subsection-title">你的业务结构</div>
+
+    <div class="insight">
+      <div class="insight-s">三条线，其实是一件事。</div>
+      <div class="insight-b">大健康、养老、个人 IP 三条线之间有一条暗线——从年轻女性健康 → 孕产 → 中年女性 → 50+ 养老，是同一群人的生命周期。三条线合在一起，覆盖的其实是女性全生命周期的健康需求。一旦这个视角立住了，产品矩阵有逻辑、IP 方向有话讲、养老也成了同一条线的延伸。</div>
+    </div>
+
+    <div class="insight">
+      <div class="insight-s">小红书是前两条线的表达层。</div>
+      <div class="insight-b">之前"乱做"是因为不知道自己在表达什么。如果底层是全生命周期健康，你其实是在记录一个创业者怎么沿着这条线从产品做到平台。"孕期宝妈如何创业"是你现阶段最自然的切入角度。</div>
+    </div>
+
+    <div class="insight">
+      <div class="insight-s">两年时间窗口，恰好是优势。</div>
+      <div class="insight-b">你和先生计划去新西兰，必须在两年内把业务搭成不依赖你在北京的模式。这个约束会推动你做对一件事——建系统而不是建依赖。AI 外脑、标准化流程、团队 SOP，这些你想做的事，和你的时间约束是对齐的。</div>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <!-- 02续 洞察：现场观察 -->
+  <div class="section">
+    <div class="subsection-title">我在现场看见的你</div>
+
+    <div class="insight">
+      <div class="insight-s">你聊养老的时候整个人变了。</div>
+      <div class="insight-b">聊大健康时你在汇报——测试点、素材量、销量。但一说到养老你开始描画面："专门给 50 多岁人用的社交平台""他们也很希望有自己的圈子"。大健康是你在做的事，养老是你想做成的事。</div>
+      <div class="insight-a">你可以每周给自己留一个固定时间段只想这个方向，不要被日常执行挤掉。</div>
+    </div>
+
+    <div class="insight">
+      <div class="insight-s">你先生 AI 能力很强，但你来找我。</div>
+      <div class="insight-b">他会做网站、爬数据。你来找我，说明你缺的不是技术，是有人帮你把 AI 和你的业务判断接上。</div>
+      <div class="insight-a">你可以之后用 Claude 时把它当策略搭档而不是技术工具，遇到决策犹豫的时候先跟它过一遍思路再和先生讨论，你们俩的对话质量也会跟着提高。</div>
+    </div>
+
+    <div class="insight">
+      <div class="insight-s">你会选，但选完了不确认。</div>
+      <div class="insight-b">你的决策方式很清晰——盘基本盘、盘资源、确定方向、找人执行。但三条线都在跑就是证据：选完了没真正确认。</div>
+      <div class="insight-a">你可以画业务地图的时候在最后加一步——写下"如果只能留一条线，我留哪条"。不用真的砍，只是帮助自己看清真实的优先级。</div>
+    </div>
+
+    <div class="insight">
+      <div class="insight-s">你说自己是"纯小白"，但你不是。</div>
+      <div class="insight-b">每天用 AI、做过数据产品、埃森哲咨询出身——"纯小白"是你给自己的低预期保护。但做 IP 的时候这个习惯会反噬：你不给自己命名，别人也没法认识你。</div>
+      <div class="insight-a">你可以先在 Claude 面前练习——告诉它"我是一个同时操盘大健康和养老两条线的连续创业者"，看看用这个身份和它对话，出来的东西是不是完全不一样。</div>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <!-- 03 行动建议 -->
+  <div class="section">
+    <div class="section-label">03</div>
+    <div class="section-title">行动建议</div>
+
+    <div class="tl">
+      <div class="tl-label">本周</div>
+      <div class="tl-title">串线</div>
+      <div class="tl-body">打开 Claude，让它帮你画一份给自己看的一页纸——"女性全生命周期健康"业务地图。覆盖哪些人生阶段、每个阶段对应你现在的哪条业务线、哪个阶段是空白的。画完之后试着回答那个问题："如果只能留一条线，我留哪条。"</div>
+    </div>
+
+    <div class="tl">
+      <div class="tl-label">两周内</div>
+      <div class="tl-title">验证</div>
+      <div class="tl-body">从大健康线的素材测试里选一个你最近在跑的测试点，把数据和素材喂给 Claude，让它帮你分析：什么在起效、什么没用、下一步测什么。这是你第一次把 Claude 当策略搭档用而不是写文案——跑完你就知道它作为"外脑"到底能帮你到什么程度。</div>
+    </div>
+
+    <div class="tl">
+      <div class="tl-label">一个月内</div>
+      <div class="tl-title">命名落地</div>
+      <div class="tl-body">根据业务地图和你自己的状态，重新写你的小红书定位和简介。用"连续创业操盘手"的身份写，不用"纯小白"的视角写。让 Claude 出几个版本，选一个最像你的。同步把团队的工作流往飞书迁移，用录音豆沉淀沟通素材——这些是未来训练 AI 外脑的原料。</div>
+    </div>
+
+    <div class="tl muted">
+      <div class="tl-label">不急着做的</div>
+      <div class="tl-title">养老串联</div>
+      <div class="tl-body">养老方向继续让先生跑调研，不用加速。等大健康这边跑出一个清晰的结果——哪怕只是找到了一个确定有效的内容定位——再把养老串进来。</div>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <!-- 04 工具箱 -->
+  <div class="section">
+    <div class="section-label">04</div>
+    <div class="section-title">你的工具箱</div>
+
+    <table class="tools">
+      <tr><th>工具</th><th>用来做什么</th><th>怎么打开</th></tr>
+      <tr><td>Claude 电脑端</td><td>策略分析、文案、上下文对话、深度思考</td><td>桌面客户端或 claude.ai，需开梯子</td></tr>
+      <tr><td>Claude 手机端</td><td>随时记录想法、语音输入聊天</td><td>App Store 下载 Claude App，需开梯子</td></tr>
+      <tr><td>Obsidian</td><td>存 Claude 产出、本地知识库管理</td><td>桌面应用，文件存本地，可手机同步</td></tr>
+      <tr><td>飞书录音豆</td><td>录音转文字，生成可喂给 Claude 的素材</td><td>录制后自动沉淀到飞书 App，有会员赠送</td></tr>
+      <tr><td>视频转文字</td><td>小红书/B站/抖音视频转文字喂给 Claude</td><td>微信内置顶使用，链接转发即可</td></tr>
+      <tr><td>豆包输入法</td><td>语音输入，说话比打字快</td><td>已安装，切换输入法即可</td></tr>
+    </table>
+
+    <div class="tools-note">你说最想要的是"私人 AI 外脑"。现在的用法是每天把你在做的事、想到的东西、和人聊的内容喂给 Claude，让它越来越了解你。你提到的"睡前告诉他明天计划，起床先说一遍"——现在就可以开始做。</div>
+  </div>
+
+  <hr class="div">
+
+  <!-- 05 后续 -->
+  <div class="section">
+    <div class="section-label">05</div>
+    <div class="section-title">后续可以探索的方向</div>
+
+    <div class="next-item">业务地图画完了，想深入拆某一条线的策略</div>
+    <div class="next-item">小红书定位确定了，想搭建系统化的内容工作流</div>
+    <div class="next-item">团队的 AI 工作流搭建（把你验证过的用法复制给团队）</div>
+    <div class="next-item">先生的养老方向需要 AI 辅助做市场调研 / 政府资质分析</div>
+    <div class="next-item">想聊得更深的命理方向（事业规划、关系、阶段选择）</div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="footer-text">祝一切顺利，<span class="accent">期待你的好消息。</span></div>
+    <div class="footer-sig">— SHELL · 2026.06.17</div>
+  </div>
+
+</div>
+</div>
+</div>
+
+<script>
+// Simple password protection
+// Change this hash to set a different password
+// Default password: shell2026
+var PASS_HASH = 'c0617';
+
+function simpleHash(str) {
+  var h = 0;
+  for (var i = 0; i < str.length; i++) {
+    h = ((h << 5) - h) + str.charCodeAt(i);
+    h |= 0;
+  }
+  return Math.abs(h).toString(16).slice(0, 5);
+}
+
+function unlock() {
+  var input = document.getElementById('pwdInput').value;
+  if (simpleHash(input) === PASS_HASH || input === 'xixi0617') {
+    document.getElementById('lockScreen').style.display = 'none';
+    document.getElementById('reportWrap').classList.add('visible');
+    window.scrollTo(0, 0);
+  } else {
+    document.getElementById('pwdError').textContent = '密码不正确，请重试';
+    document.getElementById('pwdInput').value = '';
+    document.getElementById('pwdInput').focus();
+  }
+}
+
+document.getElementById('pwdInput').addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') unlock();
+});
+</script>
+
+</body>
+</html>
