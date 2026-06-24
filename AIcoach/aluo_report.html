@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>阿罗 · AI私教服务交付报告</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#d5d0c8;font-family:'Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;min-height:100vh;color:#1a1a1a;-webkit-font-smoothing:antialiased}
+  .lock-screen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;transition:opacity .4s ease}
+  .lock-screen.fading{opacity:0}
+  .lock-card{background:#f0ede6;padding:48px 36px;max-width:340px;width:100%;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,.12)}
+  .lock-brand{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:9px;letter-spacing:3px;color:#999;margin-bottom:24px}
+  .lock-title{font-family:'Noto Serif SC',serif;font-weight:900;font-size:20px;margin-bottom:8px}
+  .lock-sub{font-size:12px;color:#888;margin-bottom:28px}
+  .lock-input{width:100%;padding:12px 16px;border:1px solid #1a1a1a;background:transparent;font-family:'Noto Sans SC',sans-serif;font-size:14px;text-align:center;letter-spacing:4px;outline:none;margin-bottom:12px;transition:border-color .2s}
+  .lock-input:focus{border-color:#1B6B5A}
+  .lock-input::placeholder{letter-spacing:1px;color:#bbb}
+  .lock-btn{width:100%;padding:12px;background:#1a1a1a;color:#fff;border:none;font-family:'Noto Sans SC',sans-serif;font-size:13px;letter-spacing:2px;cursor:pointer;transition:background .2s}
+  .lock-btn:hover{background:#1B6B5A}
+  .lock-error{font-size:11px;color:#c44;margin-top:12px;min-height:16px}
+  .report-wrap{display:none;padding:0 0 60px;opacity:0;transition:opacity .5s ease}
+  .report-wrap.visible{display:block}
+  .report-wrap.shown{opacity:1}
+  .report{max-width:640px;margin:0 auto;background:#f0ede6;box-shadow:0 8px 40px rgba(0,0,0,.12)}
+  .ri{padding:36px 28px}
+  @media(max-width:680px){.report{box-shadow:none}.ri{padding:28px 20px}body{background:#f0ede6}}
+  .masthead{display:flex;justify-content:space-between;align-items:flex-end;padding-bottom:8px;border-bottom:3px double #1a1a1a;margin-bottom:28px}
+  .masthead span{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:8px;letter-spacing:2px;color:#777}
+  .tb{margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid #1a1a1a}
+  .rt{font-family:'Noto Serif SC',serif;font-weight:900;font-size:24px;line-height:1.25;letter-spacing:-.5px;margin-bottom:10px}
+  .ac{color:#1B6B5A}
+  .rm{font-size:11px;color:#888;line-height:1.8}
+  .sec{margin-bottom:28px}
+  .sl{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:8px;letter-spacing:3px;color:#999;text-transform:uppercase;margin-bottom:4px}
+  .st{font-family:'Noto Serif SC',serif;font-weight:900;font-size:17px;margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid rgba(26,26,26,.15)}
+  .sst{font-family:'Noto Serif SC',serif;font-weight:700;font-size:13px;color:#1B6B5A;margin-bottom:12px;letter-spacing:.5px}
+  .cg{margin-bottom:14px}
+  .cg-t{font-size:11px;font-weight:700;color:#1a1a1a;margin-bottom:4px}
+  .ci{font-size:12px;line-height:1.7;color:#444;padding:2px 0 2px 18px;position:relative}
+  .ci::before{content:'✓';position:absolute;left:0;color:#1B6B5A;font-weight:700;font-size:11px}
+  .ins{margin-bottom:20px}
+  .ins-s{font-family:'Noto Serif SC',serif;font-weight:700;font-size:14px;color:#1a1a1a;line-height:1.5;margin-bottom:6px}
+  .ins-b{font-size:12.5px;line-height:1.8;color:#444;margin-bottom:8px}
+  .ins-a{font-size:12.5px;line-height:1.75;color:#1B6B5A;font-weight:500;padding-left:12px;border-left:2px solid #1B6B5A}
+  .tl{margin-bottom:22px;padding-left:24px;position:relative}
+  .tl::before{content:'';position:absolute;left:5px;top:0;bottom:0;width:2px;background:#1a1a1a}
+  .tl::after{content:'';position:absolute;left:0;top:6px;width:12px;height:12px;border-radius:50%;background:#1B6B5A}
+  .tl.mu::before{background:#ccc}
+  .tl.mu::after{background:#ccc}
+  .tl-l{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:9px;letter-spacing:2px;color:#1B6B5A;font-weight:700;margin-bottom:3px}
+  .tl-t{font-family:'Noto Serif SC',serif;font-weight:700;font-size:14px;margin-bottom:5px}
+  .tl-b{font-size:12.5px;line-height:1.75;color:#444}
+  .tl.mu .tl-l{color:#999}
+  .tg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+  .tc{border:1px solid rgba(26,26,26,.15);padding:14px;background:rgba(255,255,255,.4)}
+  .tc-n{font-weight:700;font-size:13px;margin-bottom:4px}
+  .tc-d{font-size:12px;color:#666;line-height:1.55;margin-bottom:6px}
+  .tc-h{font-size:11px;color:#999;line-height:1.5;padding-top:6px;border-top:1px dotted rgba(26,26,26,.15)}
+  .tn{font-size:12px;color:#666;line-height:1.75}
+  .ni{font-size:12px;line-height:1.65;color:#444;padding:6px 0;border-bottom:1px dotted rgba(26,26,26,.15)}
+  .ni:last-child{border-bottom:none}
+  .dv{border:none;border-top:1px solid rgba(26,26,26,.15);margin:24px 0}
+  .ft{margin-top:32px;padding-top:14px;border-top:3px double #1a1a1a;text-align:center}
+  .ft-t{font-family:'Noto Serif SC',serif;font-size:12px;color:#888}
+  .ft-s{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:8px;letter-spacing:2px;color:#999;margin-top:10px}
+  .ba-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-bottom:8px}
+  .ba-col{padding:14px}
+  .ba-l{border:1px solid rgba(26,26,26,.15);background:rgba(26,26,26,.03)}
+  .ba-r{border:2px solid #1B6B5A;background:rgba(27,107,90,.04)}
+  .ba-h{font-family:ui-monospace,monospace;font-size:9px;letter-spacing:2px;font-weight:700;margin-bottom:12px}
+  .ba-row{font-size:12.5px;color:#444;line-height:1.5;padding:6px 0;border-bottom:1px dotted rgba(26,26,26,.1)}
+  .ba-row:last-child{border-bottom:none}
+  .pw-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+  .pw-c{border:1px solid rgba(26,26,26,.12);padding:12px 14px;background:rgba(255,255,255,.45);cursor:pointer;transition:background .2s}
+  .pw-c:hover{background:rgba(255,255,255,.7)}
+  .pw-tag{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:#1B6B5A;margin-bottom:5px}
+  .pw-list{font-size:12px;line-height:1.7;color:#555}
+  .pw-detail{display:none;font-size:11px;line-height:1.7;color:#888;margin-top:6px;padding-top:6px;border-top:1px dotted rgba(26,26,26,.15)}
+  .pw-c.open .pw-detail{display:block}
+  .pw-c.open{background:rgba(255,255,255,.7)}
+  .pw-full{grid-column:1/-1;border:1px dashed rgba(26,26,26,.2);padding:12px 14px;text-align:center;background:transparent}
+  .pw-full .pw-tag{color:#999}
+  .pw-full .pw-list{color:#888}
+  .pw-star{display:inline-block;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:8px;letter-spacing:1px;color:#1B6B5A;border:1px solid #1B6B5A;padding:2px 6px;margin-top:4px}
+  .pw-foot{font-size:11px;color:#999;text-align:center;margin-top:14px;line-height:1.6}
+  .todo{list-style:none;margin-bottom:12px}
+  .todo li{font-size:12.5px;line-height:1.75;color:#444;padding:6px 0;border-bottom:1px dotted rgba(26,26,26,.1);cursor:pointer;display:flex;align-items:flex-start;gap:8px;-webkit-user-select:none;user-select:none}
+  .todo li:last-child{border-bottom:none}
+  .todo-box{width:16px;height:16px;border:1.5px solid #1a1a1a;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+  .todo li.done .todo-box{background:#1B6B5A;border-color:#1B6B5A}
+  .todo li.done .todo-box::after{content:'✓';color:#fff;font-size:10px;font-weight:700}
+  .todo li.done .todo-txt{color:#999;text-decoration:line-through}
+  .pr{font-size:12px;line-height:1.7;color:#444;padding:4px 0}
+  .pr-l{color:#888}
+  @media(max-width:480px){.rt{font-size:22px}.st{font-size:18px}.sst{font-size:15px}.ins-s{font-size:16px}.ins-b,.ins-a{font-size:15px;line-height:1.85}.cg-t{font-size:14px}.ci{font-size:14px}.tl-t{font-size:16px}.tl-b{font-size:15px;line-height:1.85}.tn,.ni{font-size:14px}.ft-t{font-size:14px}.tg{grid-template-columns:1fr}.tc-n{font-size:15px}.tc-d,.tc-h{font-size:14px;font-size:13px}.ba-row{font-size:14px}.pw-list{font-size:14px}.todo li{font-size:14px}.pr{font-size:14px}}
+</style>
+</head>
+<body>
+<div class="lock-screen" id="lockScreen">
+  <div class="lock-card">
+    <div class="lock-brand">SHELL · AI私教</div>
+    <div class="lock-title">交付报告</div>
+    <div class="lock-sub">请输入密码查看</div>
+    <input class="lock-input" id="pwdInput" type="password" placeholder="密码" autofocus>
+    <button class="lock-btn" onclick="unlock()">查看报告</button>
+    <div class="lock-error" id="pwdError"></div>
+  </div>
+</div>
+<div class="report-wrap" id="reportWrap">
+<div class="report">
+<div class="ri">
+
+  <div class="masthead">
+    <span>SHELL · AI私教</span>
+    <span>交付报告 · 2026.06.23</span>
+  </div>
+
+  <div class="tb">
+    <div class="rt">阿罗 · <span class="ac">AI私教</span>服务交付</div>
+    <div class="rm">日期：2026 年 6 月 23 日<br>服务内容：业务诊断 + AI 环境搭建 + 场景实战<br>教练：Shell（贝林）</div>
+  </div>
+
+  <div class="sec">
+    <div class="sl">01</div>
+    <div class="st">今日交付清单</div>
+    <div class="cg">
+      <div class="cg-t">业务诊断</div>
+      <div class="ci">业务全貌梳理（产品开发 × 运营销售，两大块拆解）</div>
+      <div class="ci">能量流向识别（核心区 vs 消耗区）</div>
+      <div class="ci">优先级排序（当前在推进的事项梳理 + 建议聚焦方向）</div>
+      <div class="ci">三阶段 AI 赋能规划</div>
+    </div>
+    <div class="cg">
+      <div class="cg-t">账号与环境（阿罗）</div>
+      <div class="ci">VPN 配置</div>
+      <div class="ci">Claude Pro 网页端 + 客户端均可使用</div>
+      <div class="ci">跨对话记忆开启（Claude 会记住你的背景信息）</div>
+      <div class="ci">跨对话搜索开启（可以搜索历史对话内容）</div>
+      <div class="ci">豆包输入法安装（语音输入，说话比打字快）</div>
+    </div>
+    <div class="cg">
+      <div class="cg-t">账号与环境（阿丽）</div>
+      <div class="ci">VPN 配置</div>
+      <div class="ci">Claude 网页端可使用（安卓端）</div>
+      <div class="ci">飞书数据导出教学</div>
+    </div>
+    <div class="cg">
+      <div class="cg-t">场景实战</div>
+      <div class="ci">运营数据分析：飞书台账 → Claude → 可视化看板</div>
+      <div class="ci">产品知识库启动：完整产品线口述录入 + Claude 记忆配置</div>
+      <div class="ci">品牌海报设计：Claude Design 生成品牌故事三版封面 + 名片</div>
+    </div>
+  </div>
+
+  <hr class="dv">
+
+  <div class="sec">
+    <div class="sl">02</div>
+    <div class="st">Before / After</div>
+    <div class="ba-grid">
+      <div class="ba-col ba-l">
+        <div class="ba-h" style="color:#999">BEFORE</div>
+        <div class="ba-row">配方全在脑子里</div>
+        <div class="ba-row">数据躺在表格里没人看</div>
+        <div class="ba-row">AI 装了半年没装上</div>
+        <div class="ba-row">七八件事同时推，不知道先做哪个</div>
+        <div class="ba-row">所有事一个人扛</div>
+      </div>
+      <div class="ba-col ba-r">
+        <div class="ba-h" style="color:#1B6B5A">AFTER</div>
+        <div class="ba-row">产品线已录入 Claude，它记住了</div>
+        <div class="ba-row">可视化看板，阿丽每周自己跑</div>
+        <div class="ba-row">你和阿丽都能独立使用了</div>
+        <div class="ba-row">优先级理清：A 先做，B 同步，C 放一放</div>
+        <div class="ba-row">阿丽有了自己的 AI 工具</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="dv">
+
+  <div class="sec">
+    <div class="sl">03</div>
+    <div class="st">关于你的洞察</div>
+
+    <div class="ins">
+      <div class="ins-s">你的生意是从"想帮人"长出来的。</div>
+      <div class="ins-b">你做产品的起点不是"我要创业"，是"我想从根上解决问题"。从疗愈个案转做产品，是因为你发现物质身体不改变，心灵层面聊再多也会被打回原形。</div>
+      <div class="ins-a">这个"为什么做"是你最大的竞争力。市面上做精油的人很多，从"想帮人变好"出发的人不多。</div>
+    </div>
+
+    <div class="ins">
+      <div class="ins-s">你的产品力远远跑在你的运营力前面。</div>
+      <div class="ins-b">你的配方有专业训练背景，品控标准是"我孩子能不能用"——这个不可伪造。但4年来运营方式几乎没变过。</div>
+      <div class="ins-a">这不是问题——你的产品好到不需要营销也有复购。但如果你想让更多人用到，就需要把"脑子里的东西"变成"系统能读懂的东西"。今天我们开始做的就是这件事。</div>
+    </div>
+
+    <div class="ins">
+      <div class="ins-s">消耗你的那些事，该交出去了。</div>
+      <div class="ins-b">做产品的时候你什么都不觉得累。设计排版、管账算成本、重复回答客户类似的问题——这些消耗你。但你和阿丽的分工线还没拉清楚，很多本该交出去的事还在你手上。</div>
+      <div class="ins-a">配方在等你，但你在回消息。AI 来接住那些消耗你的事——让你把时间留在配方和产品上。</div>
+    </div>
+
+    <div class="ins">
+      <div class="ins-s">你同时在做的事太多了，最重要的是减。</div>
+      <div class="ins-b" style="margin-bottom:12px;">今天我们一起理出来的优先级：</div>
+      <div style="font-size:12.5px;line-height:1.75;color:#444;margin-bottom:4px;">A · <span style="color:#1B6B5A;font-weight:700;">先做</span>：把现有产品线理扎实</div>
+      <div style="font-size:12.5px;line-height:1.75;color:#444;margin-bottom:4px;">B · <span style="color:#1B6B5A;font-weight:700;">同步做</span>：第一款精油产品上线</div>
+      <div style="font-size:12.5px;line-height:1.75;color:#444;margin-bottom:8px;">C · <span style="color:#999;">先放一放</span>：品牌IP、小程序、卡牌、内容体系</div>
+      <div style="font-size:12.5px;line-height:1.75;color:#444;">后面这些都好，但现在不是时候。把前两件做扎实了，后面的自然会长出来。</div>
+    </div>
+  </div>
+
+  <hr class="dv">
+
+  <div class="sec">
+    <div class="sl">04</div>
+    <div class="st">接下来的规划</div>
+
+    <div class="tl">
+      <div class="tl-l">阶段一 · 快速应用</div>
+      <div class="tl-t">你自己就能做</div>
+      <ul class="todo" id="todoList">
+        <li onclick="this.classList.toggle('done')"><div class="todo-box"></div><span class="todo-txt">继续补充知识库（每天10-15分钟，口述一款产品）</span></li>
+        <li onclick="this.classList.toggle('done')"><div class="todo-box"></div><span class="todo-txt">阿丽定期跑数据分析（每周/每月导出飞书台账）</span></li>
+        <li onclick="this.classList.toggle('done')"><div class="todo-box"></div><span class="todo-txt">笔记本内容继续用 Claude Design 调</span></li>
+        <li onclick="this.classList.toggle('done')"><div class="todo-box"></div><span class="todo-txt">有新设计需求直接跟 Claude 说</span></li>
+      </ul>
+      <div class="tl-b">顺便试试：跟别人（比如杰哥）聊完把录音扔给 Claude，说"帮我看看这段对话，有什么我可能没注意到的"。你本来就会内观，Claude 可以帮你更快、更具体。</div>
+    </div>
+
+    <div class="tl">
+      <div class="tl-l">阶段二 · 深化场景</div>
+      <div class="tl-t">第一款精油产品上线前</div>
+      <div class="tl-b">
+        <strong>客服提速</strong>——客户问题扔给 Claude 起草回答，调一调语气就发出去。省时间，但你私域的温度还在。<br><br>
+        <strong>小红书文案生成</strong>——基于知识库生成笔记初稿，配合晓露策略落地。<br><br>
+        <strong>产品介绍标准化</strong>——一次整理好模板，以后每款新品直接套，不用从头写。<br><br>
+        <strong>验货 / 打包标准</strong>——你脑子里的质控标准变成文件，工厂照着做，你不用每次盯。<br><br>
+        线上就能做，每次有明确产出物，做完就交付。<br><br>
+        <span style="color:#888;">以上是几个典型场景，实际根据你的业务需要来定。</span>
+      </div>
+    </div>
+
+    <div style="margin-left:24px;margin-bottom:22px;padding:14px;border:1px solid rgba(26,26,26,.15);background:rgba(255,255,255,.4)">
+      <div style="font-family:ui-monospace,monospace;font-size:8px;letter-spacing:2px;color:#1B6B5A;margin-bottom:8px">次卡费用</div>
+      <div class="pr"><span class="pr-l">线上：</span>单次 <strong>¥1,980</strong> · 3次卡 <strong>¥1,880</strong>/次 · 5次卡 <strong>¥1,680</strong>/次</div>
+      <div class="pr"><span class="pr-l">线下：</span>单次 <strong>¥3,980</strong> · 3次卡 <strong>¥3,680</strong>/次 · 5次卡 <strong>¥3,480</strong>/次</div>
+    </div>
+
+    <div class="tl mu">
+      <div class="tl-l">阶段三 · 系统搭建</div>
+      <div class="tl-t">稳定运转后</div>
+      <div class="tl-b">
+        <strong>上下文系统接入</strong>——你的知识库接入专属上下文系统，Claude、飞书、微信都能调用同一套数据，换设备不丢。首次线下搭建 + 远程维护。<br><br>
+        <strong>工作流联动</strong>——配方卡、客户分析、供应商数据、看板等结构化内容自动同步到飞书，跟阿丽协作不用手动搬。<br><br>
+        费用按需出方案。
+      </div>
+    </div>
+  </div>
+
+  <hr class="dv">
+
+  <div class="sec">
+    <div class="sl">05</div>
+    <div class="st">你的工具箱</div>
+    <div class="sst">阿罗</div>
+    <div class="tg">
+      <div class="tc"><div class="tc-n">Claude 电脑端</div><div class="tc-d">配方录入、文案生成、策略分析、设计</div><div class="tc-h">桌面客户端或 claude.ai，需开 VPN</div></div>
+      <div class="tc"><div class="tc-n">Claude 手机端</div><div class="tc-d">随时记录想法、语音输入</div><div class="tc-h">已配置，需开 VPN</div></div>
+      <div class="tc"><div class="tc-n">豆包输入法</div><div class="tc-d">语音输入，说话比打字快</div><div class="tc-h">已安装，切换输入法即可</div></div>
+      <div class="tc"><div class="tc-n">Claude Design</div><div class="tc-d">海报、名片、产品图等视觉物料</div><div class="tc-h">在 Claude 对话中直接用</div></div>
+    </div>
+    <div class="tn" style="margin-bottom:18px">记忆功能已经开了——Claude 会跨对话记住你的产品线和背景信息。你不用每次重新介绍自己。</div>
+    <div class="sst">阿丽</div>
+    <div class="tg">
+      <div class="tc"><div class="tc-n">Claude 网页端</div><div class="tc-d">数据分析、问问题、辅助管理</div><div class="tc-h">网页端登录，需开 VPN</div></div>
+      <div class="tc"><div class="tc-n">飞书导出</div><div class="tc-d">台账数据导出给 Claude</div><div class="tc-h">已教学，独立操作</div></div>
+    </div>
+  </div>
+
+  <hr class="dv">
+
+  <div class="sec">
+    <div class="sl">06</div>
+    <div class="st">后续可以探索的方向</div>
+    <div class="ni">知识库补完后，做一次产品线系统化梳理（哪些保留、哪些砍、哪些涨价）</div>
+    <div class="ni">第一款精油上线后，根据小红书数据做复盘和策略调整</div>
+    <div class="ni">阿丽独立承担更多后，你的时间往产品研发和高价值客户倾斜</div>
+    <div class="ni">你的故事和产品完全可以疗愈到更多人——等你准备好了，个人 IP 和品牌内容随时可以聊</div>
+  </div>
+
+  <div class="ft">
+    <div class="ft-t">你的产品和故事，<span class="ac">值得被更多人看到。</span></div>
+    <div class="ft-s">— SHELL · 2026.06.23</div>
+  </div>
+
+</div>
+</div>
+</div>
+
+<script>
+function unlock(){
+  var v=document.getElementById('pwdInput').value;
+  if(v==='aluo0623'){
+    var l=document.getElementById('lockScreen'),r=document.getElementById('reportWrap');
+    l.classList.add('fading');
+    setTimeout(function(){l.style.display='none';r.classList.add('visible');window.scrollTo(0,0);setTimeout(function(){r.classList.add('shown')},50)},400);
+  }else{
+    document.getElementById('pwdError').textContent='密码不正确，请重试';
+    document.getElementById('pwdInput').value='';
+    document.getElementById('pwdInput').focus();
+  }
+}
+document.getElementById('pwdInput').addEventListener('keypress',function(e){if(e.key==='Enter')unlock()});
+document.getElementById('pwdInput').addEventListener('input',function(){if(this.value==='aluo0623')unlock()});
+</script>
+</body>
+</html>
