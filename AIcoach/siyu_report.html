@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>黄思宇 · AI私教诊断交付报告</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#d5d0c8;font-family:'Noto Sans SC',-apple-system,sans-serif;min-height:100vh;color:#1a1a1a;-webkit-font-smoothing:antialiased}
+.lock-screen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;transition:opacity .4s}
+.lock-screen.fading{opacity:0}
+.lock-card{background:#f0ede6;padding:48px 36px;max-width:340px;width:100%;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,.12)}
+.lock-brand{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:9px;letter-spacing:3px;color:#999;margin-bottom:24px}
+.lock-title{font-family:'Noto Serif SC',serif;font-weight:900;font-size:20px;margin-bottom:8px}
+.lock-sub{font-size:12px;color:#888;margin-bottom:28px}
+.lock-input{width:100%;padding:12px 16px;border:1px solid #1a1a1a;background:transparent;font-family:'Noto Sans SC',sans-serif;font-size:14px;text-align:center;letter-spacing:4px;outline:none;margin-bottom:12px;transition:border-color .2s}
+.lock-input:focus{border-color:#1B6B5A}
+.lock-input::placeholder{letter-spacing:1px;color:#bbb}
+.lock-btn{width:100%;padding:12px;background:#1a1a1a;color:#fff;border:none;font-family:'Noto Sans SC',sans-serif;font-size:13px;letter-spacing:2px;cursor:pointer;transition:background .2s}
+.lock-btn:hover{background:#1B6B5A}
+.lock-error{font-size:11px;color:#c44;margin-top:12px;min-height:16px}
+.report-wrap{display:none;padding:0 0 60px;opacity:0;transition:opacity .5s}
+.report-wrap.visible{display:block}
+.report-wrap.shown{opacity:1}
+.report{max-width:640px;margin:0 auto;background:#f0ede6;box-shadow:0 8px 40px rgba(0,0,0,.12)}
+.report-inner{padding:36px 28px}
+@media(max-width:680px){.report{box-shadow:none}.report-inner{padding:28px 20px}body{background:#f0ede6}}
+.masthead{display:flex;justify-content:space-between;align-items:flex-end;padding-bottom:8px;border-bottom:3px double #1a1a1a;margin-bottom:28px}
+.masthead span{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:8px;letter-spacing:2px;color:#777}
+.title-block{margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid #1a1a1a}
+.report-title{font-family:'Noto Serif SC',serif;font-weight:900;font-size:24px;line-height:1.25;letter-spacing:-.5px;margin-bottom:10px}
+.accent{color:#1B6B5A}
+.report-meta{font-size:11px;color:#888;line-height:1.8}
+.section{margin-bottom:28px}
+.section-label{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:8px;letter-spacing:3px;color:#999;margin-bottom:4px}
+.section-title{font-family:'Noto Serif SC',serif;font-weight:900;font-size:17px;margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid rgba(26,26,26,.15)}
+.div{border:none;border-top:1px solid rgba(26,26,26,.15);margin:24px 0}
+.ba-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+@media(max-width:480px){.ba-grid{grid-template-columns:1fr}}
+.ba-card{padding:16px}
+.ba-card.before{border:1px solid rgba(26,26,26,.15);background:rgba(255,255,255,.3)}
+.ba-card.after{border:2px solid #1B6B5A;background:rgba(27,107,90,.04)}
+.ba-tag{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:9px;letter-spacing:2px;font-weight:700;margin-bottom:10px}
+.ba-card.before .ba-tag{color:#999}
+.ba-card.after .ba-tag{color:#1B6B5A}
+.ba-item{font-size:12px;line-height:1.65;color:#555;margin-bottom:6px;padding-left:14px;position:relative}
+.ba-card.before .ba-item::before{content:'—';position:absolute;left:0;color:#ccc}
+.ba-card.after .ba-item::before{content:'→';position:absolute;left:0;color:#1B6B5A}
+.insight{margin-bottom:20px}
+.insight-s{font-family:'Noto Serif SC',serif;font-weight:700;font-size:14px;color:#1a1a1a;line-height:1.5;margin-bottom:6px}
+.insight-b{font-size:12.5px;line-height:1.8;color:#444}
+.insight-summary{margin-top:20px;padding:14px 16px;border:2px solid #1B6B5A;background:rgba(27,107,90,.04);font-size:12.5px;line-height:1.8;color:#444}
+.body-text{font-size:12.5px;line-height:1.8;color:#444}
+.sub-title{font-family:'Noto Serif SC',serif;font-weight:700;font-size:13px;color:#1a1a1a;margin:16px 0 10px}
+.tl{margin-bottom:22px;padding-left:24px;position:relative}
+.tl::before{content:'';position:absolute;left:5px;top:0;bottom:0;width:2px;background:#1a1a1a}
+.tl::after{content:'';position:absolute;left:0;top:6px;width:12px;height:12px;border-radius:50%;background:#1B6B5A}
+.tl.muted::before{background:#ccc}
+.tl.muted::after{background:#ccc}
+.tl-label{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:9px;letter-spacing:2px;color:#1B6B5A;font-weight:700;margin-bottom:3px}
+.tl-title{font-family:'Noto Serif SC',serif;font-weight:700;font-size:14px;margin-bottom:5px}
+.tl-body{font-size:12.5px;line-height:1.75;color:#444}
+.tl.muted .tl-label{color:#999}
+.collapsible{margin:16px 0;border:1px solid rgba(26,26,26,.15)}
+.collapsible summary{padding:12px 16px;font-size:12px;font-weight:700;cursor:pointer;background:rgba(255,255,255,.3);color:#555;list-style:none;display:flex;align-items:center;gap:6px}
+.collapsible summary::-webkit-details-marker{display:none}
+.collapsible summary::before{content:'▸';font-size:10px;color:#999;transition:transform .2s}
+.collapsible[open] summary::before{transform:rotate(90deg)}
+.collapsible-body{padding:16px;font-size:12px;line-height:1.7;color:#444}
+.ci{padding:2px 0 2px 18px;position:relative}
+.ci::before{content:'✓';position:absolute;left:0;color:#1B6B5A;font-weight:700;font-size:11px}
+.cg{margin-bottom:12px}
+.cg-title{font-size:11px;font-weight:700;color:#1a1a1a;margin-bottom:4px}
+.scene-row{display:flex;align-items:baseline;gap:10px;margin-bottom:10px}
+.scene-tag{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;background:rgba(27,107,90,.1);color:#1B6B5A;flex-shrink:0;white-space:nowrap}
+.scene-desc{font-size:12px;color:#666;line-height:1.55}
+.option-card{padding:14px 16px;margin-bottom:10px;border:1px solid rgba(26,26,26,.15);background:rgba(255,255,255,.3)}
+.option-card.highlight{border:2px solid #1B6B5A;background:rgba(27,107,90,.04)}
+.option-label{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:9px;letter-spacing:2px;font-weight:700;color:#999;margin-bottom:4px}
+.option-card.highlight .option-label{color:#1B6B5A}
+.option-title{font-weight:700;font-size:13px;margin-bottom:4px}
+.option-desc{font-size:12px;color:#666;line-height:1.6}
+.hermes-row{display:flex;gap:8px;margin-bottom:8px;align-items:baseline}
+.hermes-date{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;font-weight:700;color:#999;flex-shrink:0;width:48px}
+.hermes-content{font-size:12px;color:#555;line-height:1.6}
+.footer{margin-top:32px;padding-top:14px;border-top:3px double #1a1a1a;text-align:center}
+.footer-sig{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:8px;letter-spacing:2px;color:#999;margin-top:10px}
+</style>
+</head>
+<body>
+<div class="lock-screen" id="lockScreen">
+  <div class="lock-card">
+    <div class="lock-brand">SHELL · AI 私教</div>
+    <div class="lock-title">黄思宇 · 诊断报告</div>
+    <div class="lock-sub">请输入密码查看</div>
+    <input class="lock-input" type="password" id="pwdInput" placeholder="密码" autofocus>
+    <button class="lock-btn" onclick="unlock()">查 看 报 告</button>
+    <div class="lock-error" id="pwdError"></div>
+  </div>
+</div>
+<div class="report-wrap" id="reportWrap">
+<div class="report">
+<div class="report-inner">
+  <div class="masthead"><span>SHELL · AI 私教</span><span>诊断报告</span></div>
+  <div class="title-block">
+    <div class="report-title">黄思宇 · <span class="accent">让你的经验长出产品</span></div>
+    <div class="report-meta">日期：2026年6月28日<br>服务：业务诊断 + 产品策略 + 合伙关系评估<br>教练：Shell（贝林）</div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">01</div>
+    <div class="section-title">Before / After</div>
+    <div class="ba-grid">
+      <div class="ba-card before">
+        <div class="ba-tag">BEFORE</div>
+        <div class="ba-item">自己搭了agent矩阵，但不确定算不算"懂AI的人"</div>
+        <div class="ba-item">产品按模块分，客户算不出"值不值"</div>
+        <div class="ba-item">和技术合伙人凭感情推进，四个月无可用产品</div>
+        <div class="ba-item">闭门会到19.8万之间没有过渡产品</div>
+        <div class="ba-item">方法论在脑子里，512G录像未整理</div>
+      </div>
+      <div class="ba-card after">
+        <div class="ba-tag">AFTER</div>
+        <div class="ba-item">AI能力重新定位——不是外行，是最强那一档</div>
+        <div class="ba-item">降本增效双线框架，客户能自己算ROI</div>
+        <div class="ba-item">四个月合作有了事实复盘，看到直观的模式</div>
+        <div class="ba-item">闭门会逻辑理清：方法论为主，AI做体验</div>
+        <div class="ba-item">下一步有清晰选项，不只有等开发进度一条路</div>
+      </div>
+    </div>
+  </div>
+  <hr class="div">
+
+  <div class="section">
+    <div class="section-label">02</div>
+    <div class="section-title">关于你的洞察</div>
+    <div class="insight">
+      <div class="insight-s">你不是AI外行。</div>
+      <div class="insight-b">扣子上8个agent，两套系统同时跑K12和商培，会横评模型、评估平台边界，在真实业务里每天使用。做AI的人不懂教培，做教培的人不碰AI——你是少数两头都站得住的人。</div>
+    </div>
+    <div class="insight-summary">
+      接下来真正要过的关：<br>
+      <strong>1. 方法论还没有变成产品</strong><br>
+      <strong>2. 产品化的路径卡在一个<span style="color:#1B6B5A">节奏不在你手里的合作结构</span>上</strong>
+    </div>
+    <div class="insight" style="margin-top:24px">
+      <div class="insight-s">你的强项在面对面。</div>
+      <div class="insight-b">招学生、会销控场、1v1诊断、处理700个家长——全靠临场判断力和掌控力。线上做不起来或许是你的价值不适合被15秒视频压缩。<br><br>不代表放弃线上，现在的思路蛮好的：<strong style="color:#1B6B5A">线上做触达，用AI辅助，人进来之后拉到线下——线下才是你的主场。</strong></div>
+    </div>
+    <div class="insight">
+      <div class="insight-s">你最值钱的东西还没有被装进任何系统里。</div>
+      <div class="insight-b">你的教培诊断框架比市面上大部分赋能课都扎实。但现在只存在于你的脑子、两张512G硬盘、和扣子里喂的梗概。<br><br>那两张硬盘里的线下大课录像是你的金矿之一。转成音频→转成文字→整理成知识库——不依赖任何人就能做，也是所有后续产品的底层素材。</div>
+    </div>
+  </div>
+  <hr class="div">
+
+  <div class="section">
+    <div class="section-label">03</div>
+    <div class="section-title">产品策略</div>
+    <div class="sub-title">降本增效双线</div>
+    <div class="body-text" style="margin-bottom:16px">核心变化：从按模块讲（我有什么卖你），变成按结果讲（你能省多少、多赚多少）。<br><br>基于你的现场反馈校准了：获客降本的核心不是省人力，是避违法风险；内容生产在艺考行业不能打；<strong style="color:#1B6B5A">辅助销售转化是最佳切入点</strong>；延长产品生命周期放在你的咨询服务里，不是AI产品。</div>
+    <div class="body-text" style="margin-bottom:20px">→ 详见附件《智启商培 · 教培机构AI赋能方案》</div>
+
+    <div class="sub-title">闭门会逻辑</div>
+    <div style="margin-bottom:16px">
+      <div class="scene-row"><span class="scene-tag">大头</span><span class="scene-desc">你的运营方法论——产品设计、财务测算、管理架构、销售转化。10年积累，客户坐在那里写不出来的东西</span></div>
+      <div class="scene-row"><span class="scene-tag">小部分</span><span class="scene-desc">AI场景体验——让他们亲手感受到"AI帮你获了一个客户""AI帮你出了一套话术"。做完就走，你不当客服</span></div>
+      <div class="scene-row"><span class="scene-tag">转化</span><span class="scene-desc">通用方法论带走了 → 但每家的财务模型、管理架构、产品地图都不一样 → 需要定制 → 你的后续产品/服务</span></div>
+    </div>
+    <div class="body-text">中间产品（你自己品牌下的AI工具）如果做出来，闭门会现场直接让他们用。但这取决于Hermes的进度，或者你是否走另一条路。</div>
+  </div>
+  <hr class="div">
+
+  <div class="section">
+    <div class="section-label">04</div>
+    <div class="section-title">Hermes 合作评估</div>
+    <div class="sub-title">四个月：承诺 vs 交付</div>
+    <div class="body-text" style="margin-bottom:16px">四个月没有交付客户可以使用的产品。与此同时，炼刀AI等竞品已上线，扣子持续迭代，你的客户热度在冷却。</div>
+
+    <div class="sub-title">在发生什么</div>
+    <div class="body-text" style="margin-bottom:16px">每一轮的结构相同：快了→发现问题→修复中→新阻碍→快了。他每次说"快了"大概率真的觉得快了，但"做完"和"能用"之间的距离比他的开发视角预估的远得多。同时范围在持续扩大，MVP还没出来，架构已经迭代了三轮。<br><br>你45%股权但不出开发费，对优先级和时间线没有实质话语权。你唯一的筹码是客户，但产品没上线，这个筹码从未被激活。</div>
+    <div class="insight-summary">你自己说过一句话：<strong>"单纯去全自动24小时在抖音上或者小红书上评论客户的话，我认为咱们卖一个课就行。"</strong><br><br>获客触达是一个功能，不是一个产品。真正的产品价值在于你的方法论被系统化。</div>
+  </div>
+  <hr class="div">
+
+  <div class="section">
+    <div class="section-label">05</div>
+    <div class="section-title">下一步</div>
+    <div class="sub-title">不管你选哪条路，现在就能做三件事</div>
+    <div style="margin-bottom:20px">
+      <div class="scene-row"><span class="scene-tag">知识库</span><span class="scene-desc">把512G变成知识库。视频→格式工厂转音频→飞书妙记转文字→结构化文档。不依赖任何人</span></div>
+      <div class="scene-row"><span class="scene-tag">跑业务</span><span class="scene-desc">继续用扣子跑业务，每次卡住的地方记下来——这些就是成型产品MVP需要解决的素材</span></div>
+      <div class="scene-row"><span class="scene-tag">录音</span><span class="scene-desc">记录留存所有咨询过程和业务表达。你的方法论在临场发挥时最完整，录下来才不会丢</span></div>
+    </div>
+
+    <div class="sub-title">我们的合作选项</div>
+    <div class="option-card">
+      <div class="option-label">A</div>
+      <div class="option-title">就到这里</div>
+      <div class="option-desc">你已经拿到本报告和降本增效产品方案，这些信息可以辅助你决策下一步怎么走。</div>
+    </div>
+    <div class="option-card highlight">
+      <div class="option-label">B</div>
+      <div class="option-title">产品技术评估</div>
+      <div class="option-desc">
+        <strong>为什么需要这一步：</strong>你懂市场和客户，他懂技术和架构，中间缺一个人把"客户要什么"翻译成"先做什么、做到什么程度算完"。<br><br>
+        <strong>怎么做：</strong><br>
+        1. 先跟Hermes单独聊一次（1-2小时），了解技术现状和他的思路，不带预设<br>
+        2. 三方坐下来（1-2小时），对齐系统的MVP定义、中间产品的可行性、优先级、时间节点<br><br>
+        <strong>你拿到什么：</strong>一份可以照着执行的产品路线图——产品路径怎么走，协作方式怎么调。<br><br>
+        费用：¥2,980
+      </div>
+    </div>
+    <div class="option-card">
+      <div class="option-label">C</div>
+      <div class="option-title">更深度的合作</div>
+      <div class="option-desc">选项B做完之后，如果需要更深度的介入——比如闭门会的AI内容支持、知识库搭建、产品持续迭代——我们再聊具体方式。</div>
+    </div>
+  </div>
+
+  <details class="collapsible">
+    <summary>📋 今日交付清单</summary>
+    <div class="collapsible-body">
+      <div class="cg"><div class="cg-title">业务诊断</div><div class="ci">AI能力现状评估</div><div class="ci">业务流程 × AI机会点地图（前端/中端/后端逐环节）</div><div class="ci">客户画像校准（四类教培客户分层）</div></div>
+      <div class="cg"><div class="cg-title">产品策略</div><div class="ci">降本增效双线框架 + 产品体系重新包装</div><div class="ci">闭门会产品逻辑对齐</div><div class="ci">现场方案校准（基于行业反馈调整）</div></div>
+      <div class="cg"><div class="cg-title">合伙关系评估</div><div class="ci">四个月进度复盘（承诺 vs 交付）</div><div class="ci">结构性问题分析</div><div class="ci">下一步选项设计（A/B/C）</div></div>
+      <div class="cg"><div class="cg-title">现场演示</div><div class="ci">Claude实战：降本增效方案现场生成</div></div>
+    </div>
+  </details>
+
+  <div class="footer"><div class="footer-sig">— SHELL · 2026.06.28</div></div>
+</div>
+</div>
+</div>
+<script>
+function unlock(){if(document.getElementById('pwdInput').value==='siyu0628'){var l=document.getElementById('lockScreen'),r=document.getElementById('reportWrap');l.classList.add('fading');setTimeout(function(){l.style.display='none';r.classList.add('visible');window.scrollTo(0,0);setTimeout(function(){r.classList.add('shown')},50)},400)}else{document.getElementById('pwdError').textContent='密码不正确，请重试';document.getElementById('pwdInput').value='';document.getElementById('pwdInput').focus()}}
+document.getElementById('pwdInput').addEventListener('keypress',function(e){if(e.key==='Enter')unlock()});
+document.getElementById('pwdInput').addEventListener('input',function(){if(this.value==='siyu0628')unlock()});
+</script>
+</body>
+</html>
